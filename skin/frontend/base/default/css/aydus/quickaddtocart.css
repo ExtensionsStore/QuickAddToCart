@@ -1,0 +1,183 @@
+@CHARSET "UTF-8";
+
+/**
+ * QuickAddToCart css
+ *
+ * @category    Aydus
+ * @package     Aydus_QuickAddToCart
+ * @author     	Aydus Consulting <davidt@aydus.com>
+ */
+
+#quickaddtocart {
+    width: 738px;
+    padding:0 0 0 20px;
+    margin: 0;
+}
+ 
+.part-border {
+	/*border-bottom: 1px solid rgb(207, 207, 207);
+	margin-left: -20px;
+	margin-right: -20px;*/
+	clear: both;
+}
+
+.part-search-text {
+	list-style: decimal;
+	list-style-position: inside;
+	padding-bottom: 12px;
+}
+
+.part-search-input {
+	padding-bottom: 12px;
+}
+
+.progress {
+	display: none;
+}
+
+#part_form {
+	display: none;
+}
+
+#part_form .message {
+	padding-bottom: 10px;
+}
+
+.part-results {
+	display: none;
+}
+
+.part-results-items {
+	width: 100%;
+	margin-bottom: 20px;
+	overflow-x: scroll;
+}
+
+.items {
+	position: relative;
+	left: 0;
+	overflow: hidden;
+}
+
+.part-result {
+	width: 238px;
+	float: left;
+	padding: 0 0 10px 0;
+}
+
+.part-image img {
+	width: 135px;
+	height: 135px;
+}
+
+.part-form-button-container {
+	clear: both;
+	width: 100%;
+	padding: 10px 0 10px 0;
+}
+
+.part-form-button  {
+	margin: 0 auto 10px;
+	float: left;
+}	
+
+.part-form-checkout {
+	float: right;
+}
+
+.checkout-button {
+	display: none;
+}
+
+.part-results-items, .part-name, .part-sku, .part-addtocart {
+	padding-top: 10px;
+}
+
+.part-name a, .part-sku label, .part-price label, .part-inventory label, .part-price-final {
+	font-weight: bold;
+}
+		
+.part-checkbox {
+	margin-right: 6px;
+}
+
+.part-button {
+	margin-left: 0;
+}
+
+.part-qty-label {
+	font-weight: bold;
+	float: left;
+	margin-right: 15px;
+}
+
+.part-qty {
+	width: 15px;
+}
+
+#part_cart .page-title {
+	margin-bottom: 0;
+}
+
+.part-cart {
+	margin-left: -20px;
+	margin-right: -20px;
+	position: relative;
+}
+
+.part-cart .cart-table {
+	width: 738px;
+	margin-left: 20px;
+}
+
+.part-cart-loading {
+	display: none;
+	background-color: white;
+	opacity: .6;
+	width: 100%;
+	height: 100%;
+	min-height: 200px;
+    position: absolute;
+    left: 0;
+    top: 0;
+   	z-index: 2;
+	white-space: nowrap;
+    text-align: center;  
+}
+
+.part-cart-progress {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.cart-progress {
+    vertical-align: middle;
+    max-height: 16px;
+    max-width: 16px;
+}
+
+.part-cart-load {
+	/*width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;	
+	z-index: 1;	*/
+}
+
+.shopping-cart {
+	display: inline-block;
+	width: 33%;	
+}
+
+.cart-subtotal {
+	display: inline-block;
+	width: 33%;	
+	text-align: center;
+}
+
+#part_cart .checkout-button {
+	display: inline-block;
+	width: 33%;	
+	text-align: right;
+}

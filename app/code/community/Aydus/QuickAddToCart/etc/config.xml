@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Quick order
+ *
+ * @category    Aydus
+ * @package     Aydus_QuickAddToCart
+ * @author     	Aydus Consulting <davidt@aydus.com>
+ */
+-->
+<config>
+    <modules>
+        <Aydus_QuickAddToCart>
+            <version>1.0.0</version>
+        </Aydus_QuickAddToCart>
+    </modules>
+    <frontend>
+        <routers>
+            <quickaddtocart>
+                <use>standard</use>
+                <args>
+                    <module>Aydus_QuickAddToCart</module>
+                    <frontName>quickaddtocart</frontName>
+                </args>
+            </quickaddtocart>
+        </routers>    
+        <layout>
+            <updates>
+                <aydus_quickaddtocart module="Aydus_QuickAddToCart">
+                    <file>aydus/quickaddtocart.xml</file>
+                </aydus_quickaddtocart>
+            </updates>
+        </layout>
+        <events>
+            <customer_login>
+                <observers>
+                    <quickaddtocart_redirect>
+                        <class>quickaddtocart/observer</class>
+                        <method>quickaddtocartRedirect</method>
+                    </quickaddtocart_redirect>
+                </observers>
+            </customer_login>        
+        </events>
+    </frontend>
+    <global>
+        <blocks>
+            <aydus_quickaddtocart>
+                <class>Aydus_QuickAddToCart_Block</class>
+            </aydus_quickaddtocart>
+        </blocks>
+        <models>
+            <aydus_quickaddtocart>
+                <class>Aydus_QuickAddToCart_Model</class>
+            </aydus_quickaddtocart>
+        </models>
+        <helpers>
+            <aydus_quickaddtocart>
+                <class>Aydus_QuickAddToCart_Helper</class>
+            </aydus_quickaddtocart>
+        </helpers>   
+        <resources>
+            <aydus_quickaddtocart_setup>
+                <setup>
+                    <module>Aydus_QuickAddToCart</module>
+                </setup>
+            </aydus_quickaddtocart_setup>
+        </resources>
+    </global>   
+</config>

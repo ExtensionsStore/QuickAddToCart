@@ -1,0 +1,52 @@
+<?php
+/**
+ * Cart
+ *
+ * @category    Aydus
+ * @package     Aydus_QuickAddToCart
+ * @author     	Aydus Consulting <davidt@aydus.com>
+ */
+$_items = $this->getItems();
+$currencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+?>
+<table class="data-table cart-table">
+
+    <thead>
+        <tr class="first">
+            <th rowspan="1">&nbsp;</th>
+            <th rowspan="1"><span class="nobr">Product Name</span></th>
+            <th rowspan="1"><span class="nobr">Warehouse</span></th>
+            <th class="a-center" colspan="1"><span class="nobr">Unit Price</span></th>
+            <th rowspan="1" class="a-center">Qty</th>
+            <th class="a-center" colspan="1">Subtotal</th>
+            <th rowspan="1" class="a-center">Remove</th>
+        </tr>
+    </thead>
+
+    <?php if (count($_items) > 0): ?>                    
+        <?php foreach ($_items as $_item): ?>
+            <?php echo $this->getItemHtml($_item) ?>
+        <?php endforeach; ?>
+    <?php else : ?>
+        <tr>
+            <td colspan="7">No items in your cart</td>
+        </tr>
+    <?php endif; ?>
+    <tfoot>
+        <tr>
+            <td colspan="7">
+                <span class="shopping-cart"><a href="<?php echo $this->getUrl('checkout/cart') ?>"><?php echo $this->__('Go to Shopping Cart') ?></a></span>
+                <span class="cart-subtotal">
+                    <span class="label"><?php echo $this->__('Cart Subtotal:') ?></span> <?php echo Mage::helper('checkout')->formatPrice($this->getSubtotal()) ?> <?php echo $currencyCode; ?>
+                    <?php if ($_subtotalInclTax = $this->getSubtotalInclTax()): ?>
+                        <br />(<?php echo Mage::helper('checkout')->formatPrice($_subtotalInclTax) ?> <?php echo Mage::helper('tax')->getIncExcText(true) ?>)
+                    <?php endif; ?>
+                </span>
+                <span class="checkout-button"><a href="<?php echo $this->getUrl('checkout/onepage') ?>" class="button"><span><?php echo $this->__('Checkout') ?></span></a></span>
+            </td>
+        </tr>
+
+    </tfoot>
+
+</table>
+

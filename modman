@@ -1,0 +1,7 @@
+app/code/community/Aydus/QuickAddToCart/                             app/code/community/Aydus/QuickAddToCart/
+app/design/frontend/base/default/layout/aydus/quickaddtocart.xml     app/design/frontend/base/default/layout/aydus/quickaddtocart.xml
+app/design/frontend/base/default/template/aydus/quickaddtocart/      app/design/frontend/base/default/template/aydus/quickaddtocart/
+app/etc/modules/Aydus_QuickAddToCart.xml                             app/etc/modules/Aydus_QuickAddToCart.xml
+skin/frontend/base/default/css/aydus/quickaddtocart.css              skin/frontend/base/default/css/aydus/quickaddtocart.css
+skin/frontend/base/default/images/aydus/quickaddtocart-progress.gif  skin/frontend/base/default/images/aydus/quickaddtocart-progress.gif
+skin/frontend/base/default/js/aydus/quickaddtocart.js                skin/frontend/base/default/js/aydus/quickaddtocart.js
