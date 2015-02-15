@@ -9,15 +9,9 @@
  */
 
 #quickaddtocart {
-    width: 738px;
-    padding:0 0 0 20px;
-    margin: 0;
 }
  
 .part-border {
-	/*border-bottom: 1px solid rgb(207, 207, 207);
-	margin-left: -20px;
-	margin-right: -20px;*/
 	clear: both;
 }
 
@@ -65,6 +59,11 @@
 	padding: 0 0 10px 0;
 }
 
+.part-result label {
+	padding-right: 3px;
+	font-weight: bold;
+}
+
 .part-image img {
 	width: 135px;
 	height: 135px;
@@ -93,7 +92,7 @@
 	padding-top: 10px;
 }
 
-.part-name a, .part-sku label, .part-price label, .part-inventory label, .part-price-final {
+.part-name a {
 	font-weight: bold;
 }
 		
@@ -120,14 +119,10 @@
 }
 
 .part-cart {
-	margin-left: -20px;
-	margin-right: -20px;
 	position: relative;
 }
 
 .part-cart .cart-table {
-	width: 738px;
-	margin-left: 20px;
 }
 
 .part-cart-loading {
@@ -157,27 +152,22 @@
     max-width: 16px;
 }
 
-.part-cart-load {
-	/*width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;	
-	z-index: 1;	*/
+.cart-footer-action {
+	display: inline-block;	
+	margin: 0 auto;
 }
 
 .shopping-cart {
-	display: inline-block;
-	width: 33%;	
+	float: left;
 }
 
-.cart-subtotal {
-	display: inline-block;
-	width: 33%;	
+.cart-subtotal span {
+	text-decoration: none !important;
+	color: initial !important;
+	cursor: auto;
 	text-align: center;
 }
 
 #part_cart .checkout-button {
-	display: inline-block;
-	width: 33%;	
-	text-align: right;
+	float: right;
 }

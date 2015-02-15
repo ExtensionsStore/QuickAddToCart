@@ -13,7 +13,7 @@
 
     <dealer_links>
         <reference name="customer_account_navigation">
-            <action method="addLink" translate="label" module="dealer"><name>quickaddtocart</name><path>quickaddtocart</path><label>Quick Order</label><url_params></url_params><before></before><after>account</after></action>
+            <action method="addLink" translate="label" module="dealer"><name>quickaddtocart</name><path>quickaddtocart</path><label>Quick Add To Cart</label><url_params></url_params><before></before><after>account</after></action>
         </reference>
     </dealer_links>
     
@@ -29,14 +29,21 @@
             <action method="addItem"><type>skin_js</type><name>js/aydus/quickaddtocart.js</name></action>
         </reference>
         
-        <reference name="breadcrumbs">             
-        	<action method="addCrumb"><crumbName>Quick Add To Cart</crumbName><crumbInfo><label>Quick Add To Cart</label><title>Quick Add To Cart</title></crumbInfo></action>
-       	</reference>        
+<!--         <reference name="breadcrumbs">              -->
+<!--         	<action method="addCrumb"><crumbName>Quick Add To Cart</crumbName><crumbInfo><label>Quick Add To Cart</label><title>Quick Add To Cart</title></crumbInfo></action> -->
+<!--        	</reference>         -->
         
         <reference name="content">
-			<block type="cms/block" name="quickaddtocart">
-			    <action method="setBlockId"><block_id>quickaddtocart</block_id></action>
-			</block> 
+			<block type="aydus_quickaddtocart/index" name="cart" template="aydus/quickaddtocart/index.phtml">
+	            <block type="checkout/cart" name="checkout.cart" template="aydus/quickaddtocart/cart.phtml">
+	                <action method="setCartTemplate"><value>aydus/quickaddtocart/cart.phtml</value></action>
+	                <action method="setEmptyTemplate"><value>aydus/quickaddtocart/cart.phtml</value></action>
+	                <action method="chooseTemplate"/>
+	                <action method="addItemRender"><type>simple</type><block>checkout/cart_item_renderer</block><template>checkout/cart/item/default.phtml</template></action>
+	                <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/cart/item/default.phtml</template></action>
+	                <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/cart/item/default.phtml</template></action>
+	            </block>			
+			</block>
         </reference>
         
     </quickaddtocart_index_index>   
@@ -53,16 +60,23 @@
             <action method="addItem"><type>skin_js</type><name>js/aydus/quickaddtocart.js</name></action>
         </reference>
         
-        <reference name="breadcrumbs">             
-        	<action method="addCrumb"><crumbName>Quick Add To Cart</crumbName><crumbInfo><label>Quick Add To Cart</label><title>Quick Add To Cart</title></crumbInfo></action>
-       	</reference>        
+<!--         <reference name="breadcrumbs">              -->
+<!--         	<action method="addCrumb"><crumbName>Quick Add To Cart</crumbName><crumbInfo><label>Quick Add To Cart</label><title>Quick Add To Cart</title></crumbInfo></action> -->
+<!--        	</reference>         -->
         
         <reference name="content">
-			<block type="cms/block" name="quickaddtocart">
-			    <action method="setBlockId"><block_id>quickaddtocart</block_id></action>
-			</block> 
+			<block type="aydus_quickaddtocart/index" name="cart" template="aydus/quickaddtocart/index.phtml">
+	            <block type="checkout/cart" name="checkout.cart" template="aydus/quickaddtocart/cart.phtml">
+	                <action method="setCartTemplate"><value>aydus/quickaddtocart/cart.phtml</value></action>
+	                <action method="setEmptyTemplate"><value>aydus/quickaddtocart/cart.phtml</value></action>
+	                <action method="chooseTemplate"/>
+	                <action method="addItemRender"><type>simple</type><block>checkout/cart_item_renderer</block><template>checkout/cart/item/default.phtml</template></action>
+	                <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/cart/item/default.phtml</template></action>
+	                <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/cart/item/default.phtml</template></action>
+	            </block>			
+			</block>			
         </reference>
         
-    </quickaddtocart_index_customer>       
-
+    </quickaddtocart_index_customer>   
+    
 </layout>

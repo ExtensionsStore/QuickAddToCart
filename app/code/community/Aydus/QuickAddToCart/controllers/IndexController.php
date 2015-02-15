@@ -66,7 +66,6 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
                 $fulltextResource->prepareResult($fulltextModel, $q, $query);
 
                 $collection = Mage::getResourceModel('catalog/product_collection');
-                //$collection->addAttributeToFilter('hide_add_to_cart',0);
                 $searchResultTable = $collection->getTable('catalogsearch/result');
                 $select = $collection->getSelect();
                 $select->joinInner(
@@ -143,10 +142,44 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
                 $cartHeader->addItemRender('simple', 'checkout/cart_item_renderer', 'checkout/cart/sidebar/default.phtml');
                 $cartHeader->addItemRender('grouped', 'checkout/cart_item_renderer_grouped', 'checkout/cart/sidebar/default.phtml');
                 $cartHeader->addItemRender('configurable', 'checkout/cart_item_renderer_configurable', 'checkout/cart/sidebar/default.phtml');
-                $cartHeader->setTemplate('checkout/cart/cartheader.phtml');
+                if (Mage::getSingleton('core/design_package')->getPackageName() == 'rwd'){
+                    $cartHeader->setTemplate('checkout/cart/minicart/items.phtml');
+                } else {
+                    $cartHeader->setTemplate('checkout/cart/cartheader.phtml');
+                }
+                
+                $count = $cart->getQuote()->getItemsQty();
+                $removeClass = '';
+                
+                if ($count == 1) {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart (%s item)', $count);
+                    $removeClass = 'no-count';
+                } elseif ($count > 0) {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart (%s items)', $count);
+                    $removeClass = 'no-count';
+                } else {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart');
+                }
 
                 $result['error'] = false;
-                $result['data'] = array('count' => $cart->getQuote()->getItemsQty(), 'top_cart_html' => $cartHeader->toHtml());
+                $result['data'] = array(
+                            '.top-link-cart' => array(
+                                'html' => $topLinkCart,
+                            ),
+                            '.skip-cart .count' => array(
+                                'html' => $count,
+                            ),
+                            '.skip-cart' => array(
+                                'removeClass' => $removeClass,
+                            ),
+                            '#header-cart' => array(
+                                'html' => $cartHeader->toHtml(),
+                            ),
+                            '.top-cart' => array(
+                                'html' => $cartHeader->toHtml(),
+                            ),
+                        );
+                
             } catch (Exception $e) {
 
                 $result['error'] = true;
@@ -169,8 +202,9 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
      * @return Mage_Checkout_Block_Cart_Sidebar
      */
     protected function _getCartHeader() {
+        
         $cartHeader = $this->getLayout()->createBlock('checkout/cart_sidebar');
-
+        
         return $cartHeader;
     }
 
@@ -178,13 +212,91 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
      * Get cart items
      */
     public function cartAction() {
+        
         $cartHeader = $this->_getCartHeader();
-        $cartHeader->addItemRender('simple', 'checkout/cart_item_renderer', 'aydus/quickaddtocart/cart/item.phtml');
-        $cartHeader->addItemRender('grouped', 'checkout/cart_item_renderer_grouped', 'aydus/quickaddtocart/cart/item.phtml');
-        $cartHeader->addItemRender('configurable', 'checkout/cart_item_renderer_configurable', 'aydus/quickaddtocart/cart/item.phtml');
+        $cartHeader->addItemRender('simple', 'checkout/cart_item_renderer', 'checkout/cart/item/default.phtml');
+        $cartHeader->addItemRender('grouped', 'checkout/cart_item_renderer_grouped', 'checkout/cart/item/default.phtml');
+        $cartHeader->addItemRender('configurable', 'checkout/cart_item_renderer_configurable', 'checkout/cart/item/default.phtml');
         $cartHeader->setTemplate('aydus/quickaddtocart/cart.phtml');
+        $cartHeader->setCartTemplate('aydus/quickaddtocart/cart.phtml');
+        $cartHeader->setEmptyTemplate('aydus/quickaddtocart/cart.phtml');
 
         echo $cartHeader->toHtml();
+    }
+    
+    /**
+     * Edit item qty
+     */
+    public function editqtyAction(){
+        
+        $itemId = (int) $this->getRequest()->getParam('item_id');
+        $qty = (int) $this->getRequest()->getParam('qty');
+        $result = array();
+        
+        if ($itemId && is_numeric($qty)) {
+        
+            try {
+                $cart = Mage::getModel('checkout/cart');
+                $cart->init();
+                $cart->updateItem($itemId, array('qty'=>$qty));
+                $cart->save();
+                Mage::getSingleton('checkout/session')->setCartWasUpdated(true);
+        
+                $cartHeader = $this->_getCartHeader();
+                $cartHeader->addItemRender('simple', 'checkout/cart_item_renderer', 'checkout/cart/sidebar/default.phtml');
+                $cartHeader->addItemRender('grouped', 'checkout/cart_item_renderer_grouped', 'checkout/cart/sidebar/default.phtml');
+                $cartHeader->addItemRender('configurable', 'checkout/cart_item_renderer_configurable', 'checkout/cart/sidebar/default.phtml');
+                if (Mage::getSingleton('core/design_package')->getPackageName() == 'rwd'){
+                    $cartHeader->setTemplate('checkout/cart/minicart/items.phtml');
+                } else {
+                    $cartHeader->setTemplate('checkout/cart/cartheader.phtml');
+                }
+        
+                $count = $cart->getQuote()->getItemsQty();
+                $addClass = '';
+        
+                if ($count == 1) {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart (%s item)', $count);
+                } elseif ($count > 0) {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart (%s items)', $count);
+                } else {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart');
+                    $addClass = 'no-count';
+                }
+        
+                $result['error'] = false;
+                $result['data'] = array(
+                        '.top-link-cart' => array(
+                                'html' => $topLinkCart,
+                        ),
+                        '.skip-cart .count' => array(
+                                'html' => $count,
+                        ),
+                        '.skip-cart' => array(
+                                'addClass' => $addClass,
+                        ),
+                        '#header-cart' => array(
+                                'html' => $cartHeader->toHtml(),
+                        ),
+                        '.top-cart' => array(
+                                'html' => $cartHeader->toHtml(),
+                        ),
+                );
+        
+            } catch (Exception $e) {
+        
+                $result['error'] = true;
+                $result['data'] = $e->getMessage();
+            }
+        } else {
+        
+            $result['error'] = true;
+            $result['data'] = 'No item';
+        }
+        
+        $resultJson = json_encode($result);
+        
+        $this->getResponse()->setHeader('Content-type', 'application/json')->setBody($resultJson);        
     }
 
     /**
@@ -207,10 +319,43 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
                 $cartHeader->addItemRender('simple', 'checkout/cart_item_renderer', 'checkout/cart/sidebar/default.phtml');
                 $cartHeader->addItemRender('grouped', 'checkout/cart_item_renderer_grouped', 'checkout/cart/sidebar/default.phtml');
                 $cartHeader->addItemRender('configurable', 'checkout/cart_item_renderer_configurable', 'checkout/cart/sidebar/default.phtml');
-                $cartHeader->setTemplate('checkout/cart/cartheader.phtml');
+                if (Mage::getSingleton('core/design_package')->getPackageName() == 'rwd'){
+                    $cartHeader->setTemplate('checkout/cart/minicart/items.phtml');
+                } else {
+                    $cartHeader->setTemplate('checkout/cart/cartheader.phtml');
+                }
 
+                $count = $cart->getQuote()->getItemsQty();
+                $addClass = '';
+                
+                if ($count == 1) {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart (%s item)', $count);
+                } elseif ($count > 0) {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart (%s items)', $count);
+                } else {
+                    $topLinkCart = Mage::helper('checkout')->__('My Cart');
+                    $addClass = 'no-count';
+                }
+                                
                 $result['error'] = false;
-                $result['data'] = array('count' => $cart->getQuote()->getItemsQty(), 'top_cart_html' => $cartHeader->toHtml());
+                $result['data'] = array(
+                        '.top-link-cart' => array(
+                                'html' => $topLinkCart,
+                        ),
+                        '.skip-cart .count' => array(
+                                'html' => $count,
+                        ),
+                        '.skip-cart' => array(
+                                'addClass' => $addClass,
+                        ),
+                        '#header-cart' => array(
+                                'html' => $cartHeader->toHtml(),
+                        ),
+                        '.top-cart' => array(
+                                'html' => $cartHeader->toHtml(),
+                        ),
+                );                
+                
             } catch (Exception $e) {
 
                 $result['error'] = true;

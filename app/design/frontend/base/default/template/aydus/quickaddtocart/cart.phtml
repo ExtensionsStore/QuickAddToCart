@@ -7,46 +7,58 @@
  * @author     	Aydus Consulting <davidt@aydus.com>
  */
 $_items = $this->getItems();
-$currencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+$_priceDisplay = ($this->helper('tax')->displayCartBothPrices()) ? 'display-both-prices' : 'display-single-price';
 ?>
-<table class="data-table cart-table">
-
-    <thead>
-        <tr class="first">
-            <th rowspan="1">&nbsp;</th>
-            <th rowspan="1"><span class="nobr">Product Name</span></th>
-            <th rowspan="1"><span class="nobr">Warehouse</span></th>
-            <th class="a-center" colspan="1"><span class="nobr">Unit Price</span></th>
-            <th rowspan="1" class="a-center">Qty</th>
-            <th class="a-center" colspan="1">Subtotal</th>
-            <th rowspan="1" class="a-center">Remove</th>
-        </tr>
-    </thead>
-
-    <?php if (count($_items) > 0): ?>                    
-        <?php foreach ($_items as $_item): ?>
-            <?php echo $this->getItemHtml($_item) ?>
-        <?php endforeach; ?>
-    <?php else : ?>
-        <tr>
-            <td colspan="7">No items in your cart</td>
-        </tr>
-    <?php endif; ?>
-    <tfoot>
-        <tr>
-            <td colspan="7">
-                <span class="shopping-cart"><a href="<?php echo $this->getUrl('checkout/cart') ?>"><?php echo $this->__('Go to Shopping Cart') ?></a></span>
-                <span class="cart-subtotal">
-                    <span class="label"><?php echo $this->__('Cart Subtotal:') ?></span> <?php echo Mage::helper('checkout')->formatPrice($this->getSubtotal()) ?> <?php echo $currencyCode; ?>
-                    <?php if ($_subtotalInclTax = $this->getSubtotalInclTax()): ?>
-                        <br />(<?php echo Mage::helper('checkout')->formatPrice($_subtotalInclTax) ?> <?php echo Mage::helper('tax')->getIncExcText(true) ?>)
-                    <?php endif; ?>
-                </span>
-                <span class="checkout-button"><a href="<?php echo $this->getUrl('checkout/onepage') ?>" class="button"><span><?php echo $this->__('Checkout') ?></span></a></span>
-            </td>
-        </tr>
-
-    </tfoot>
-
-</table>
-
+<div class="cart <?php echo $_priceDisplay; ?>">
+    <form action="<?php echo $this->getUrl('checkout/cart/updatePost') ?>" method="post">
+        <?php echo $this->getBlockHtml('formkey'); ?>
+        <table id="shopping-cart-table" class="data-table cart-table">
+            <colgroup>
+                <col width="1">
+                <col width="1">
+                <col width="1">
+                <col width="1">
+                <col width="1">
+                <col width="1">
+            </colgroup>
+            <thead>
+                <tr class="first">
+                    <th rowspan="1"><span class="nobr">Product</span></th>
+                    <th rowspan="1">&nbsp;</th>
+                    <th class="a-center" colspan="1"><span class="nobr">Price</span></th>
+                    <th rowspan="1" class="a-center">Qty</th>
+                    <th class="a-center" colspan="1">Subtotal</th>
+                    <th rowspan="1" class="a-center">&nbsp;</th>
+                </tr>
+            </thead>
+        
+            <?php if (count($_items) > 0): ?>                    
+                <?php foreach ($_items as $_item): ?>
+                    <?php echo $this->getItemHtml($_item) ?>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <tr>
+                    <td colspan="6">No items in your cart</td>
+                </tr>
+            <?php endif; ?>
+            <tfoot>
+                <tr class="first">
+                    <td colspan="6" class="a-center">
+                        <span class="button2 cart-footer-action cart-subtotal">
+                            <span class="label"><?php echo $this->__('Cart Subtotal:') ?></span> <?php echo Mage::helper('checkout')->formatPrice($this->getSubtotal()) ?>
+                            <?php if ($_subtotalInclTax = $this->getSubtotalInclTax()): ?>
+                                <br />(<?php echo Mage::helper('checkout')->formatPrice($_subtotalInclTax) ?> <?php echo Mage::helper('tax')->getIncExcText(true) ?>)
+                            <?php endif; ?>
+                        </span>
+                    </td>
+                </tr>
+                <tr class="last">
+                    <td colspan="6" class="a-right cart-footer-actions">
+                        <span class="button2 cart-footer-action shopping-cart"><a href="<?php echo $this->getUrl('checkout/cart') ?>"><span><span><?php echo $this->__('Go to Shopping Cart') ?></span></span></a></span>
+                        <span class="button2 cart-footer-action checkout-button"><a href="<?php echo $this->getUrl('checkout/onepage') ?>"><span><span><?php echo $this->__('Checkout') ?></span></span></a></span>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+</div>

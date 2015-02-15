@@ -9,6 +9,7 @@
 var quickaddtocart = function ()
 {
     //urls to quickaddtocart controller
+    var _storeUrl;
     var _searchUrl;
     var _addtocartUrl;
     var _cartUrl;
@@ -43,7 +44,7 @@ var quickaddtocart = function ()
     {
         if (!_searching) {
 
-            jQuery(_searchProgress).show();
+            jQuery(_searchProgress).css('display', 'inline-block');
             jQuery(_partsearchButton).attr('disabled', 'disabled');
             _searching = true;
             var $message = jQuery(_addtocartForm).find('.message');
@@ -62,7 +63,7 @@ var quickaddtocart = function ()
     //post search request
     var postSearch = function (data, callback)
     {
-        jQuery.post(_searchUrl, data, function (res) {
+        jQuery.post(_storeUrl + 'search', data, function (res) {
 
             jQuery(_addtocartForm).show();
             var $message = jQuery(_addtocartForm).find('.message');
@@ -256,7 +257,7 @@ var quickaddtocart = function ()
                 var partSku = document.createElement('div');
                 partSku.className = 'part-sku';
                 var partSkuLabel = document.createElement('label');
-                partSkuLabel.appendChild(document.createTextNode('Part No.: '));
+                partSkuLabel.appendChild(document.createTextNode('SKU: '));
                 partSku.appendChild(partSkuLabel);
                 partSku.appendChild(document.createTextNode(sku));
                 partResult.appendChild(partSku);
@@ -284,18 +285,10 @@ var quickaddtocart = function ()
                  partResult.appendChild(partInventory);*/
 
                 // prices
-                var partPrice = document.createElement('div');
-                partPrice.className = 'part-price';
-                var partPriceLabel = document.createElement('label');
-                partPriceLabel.appendChild(document.createTextNode('ADP Price: '));
-                partPrice.appendChild(partPriceLabel);
-                partPrice.appendChild(document.createTextNode(price));
-                partResult.appendChild(partPrice);
-
                 var partFinalPrice = document.createElement('div');
                 partFinalPrice.className = 'part-price-final';
                 var partFinalPriceLabel = document.createElement('label');
-                partFinalPriceLabel.appendChild(document.createTextNode('Your Price: '));
+                partFinalPriceLabel.appendChild(document.createTextNode('Price: '));
                 partFinalPrice.appendChild(partFinalPriceLabel);
                 partFinalPrice.appendChild(document.createTextNode(finalPrice));
                 partResult.appendChild(partFinalPrice);
@@ -336,7 +329,7 @@ var quickaddtocart = function ()
 
                 var partButton = document.createElement('input');
                 partButton.type = 'button';
-                partButton.className = 'part-button';
+                partButton.className = 'button part-button';
                 partButton.name = 'part[button][]';
                 partButton.value = 'Add';
                 if (qtys <= 0) {
@@ -373,6 +366,13 @@ var quickaddtocart = function ()
             jQuery('.next').click(scroll);
         }
 
+    };
+    
+    //init remove and qty
+    var initCartHandlers = function()
+    {
+        jQuery('.cart input.qty').change(editQty);
+        jQuery('.btn-remove').click(removeCart);
     };
 
     //add one to cart
@@ -427,25 +427,11 @@ var quickaddtocart = function ()
     //post items to cart
     var post = function (data)
     {
-        jQuery.post(_addtocartUrl, data, function (res) {
+        jQuery.post(_storeUrl + 'addtocart', data, function (res) {
 
             if (!res.error) {
 
-                //show checkout button and cart count
-                var count = res.data.count;
-                if (count > 0) {
-                    jQuery(_checkoutButton).find('span span').html('Checkout (' + count + ')');
-                    jQuery(_checkoutButton).show();
-                } else {
-                    jQuery(_checkoutButton).hide();
-                }
-
-                //replace cart header
-                var topCartHtml = res.data.top_cart_html;
-                jQuery('.top-cart').replaceWith(topCartHtml);
-
-                //clear out results
-                //reset();
+            	updateHeaderCart(res.data);
 
                 //flag added parts
                 jQuery('.part-checkbox').addClass('part-added');
@@ -462,6 +448,34 @@ var quickaddtocart = function ()
         });
 
     };
+    
+    var updateHeaderCart = function(data)
+    {
+    	for (var selector in data){
+    		
+    		var datum = data[selector];
+    		
+    		if (datum.html){
+        		var html = datum.html;
+        		jQuery(selector).html(html);
+    		}
+    		if (datum.attributes){
+    			for (var attributeKey in datum.attributes){
+    				var attributeValue = datum.attributes[attributeKey];
+        			jQuery(selector).attr(attributeKey, attributeValue);
+    			}
+    		}
+    		if (datum.hide){
+    			jQuery(selector).hide();
+    		}
+    		if (datum.addClass && datum.addClass.length > 0){
+    			jQuery(selector).addClass(datum.addClass);
+    		}
+    		if (datum.removeClass && datum.removeClass.length > 0){
+    			jQuery(selector).removeClass(datum.removeClass);
+    		}
+    	}
+    };
 
     //update cart
     var updateCart = function ()
@@ -471,24 +485,10 @@ var quickaddtocart = function ()
         cartProgress(true);
 
         if ($cartLoad.length > 0) {
-            $cartLoad.load(_cartUrl, function (response, status, xhr) {
+            $cartLoad.load(_storeUrl + 'cart', function (response, status, xhr) {
                 if (status == 'success') {
 
-                    jQuery('.part-cart-remove').click(function (e) {
-
-                        e.preventDefault();
-
-                        var itemId = jQuery(this).attr('item_id');
-                        itemId = parseInt(itemId);
-
-                        if (!isNaN(itemId)) {
-
-                            removeCart(itemId);
-
-                        }
-
-                    });
-
+                	initCartHandlers();
                     cartProgress(false);
 
                 }
@@ -518,48 +518,84 @@ var quickaddtocart = function ()
         }
 
     };
+    
+    //edit item qty
+    var editQty = function(e){
+    	
+        e.preventDefault();
+        var $input = jQuery(this);
+        var name = $input.attr('name');
+        var itemId = name.replace(/cart\[(\d+)\]\[qty\]/,'$1');
+        itemId = parseInt(itemId);
+        var qty = $input.val();
+        qty = parseInt(qty);
+
+        if (!isNaN(itemId) && !isNaN(qty)) {
+
+            var data = {item_id: itemId, qty: qty};
+            cartProgress(true);
+
+            jQuery.post(_storeUrl + 'editqty', data, function (res) {
+
+                if (!res.error) {
+
+                	updateHeaderCart(res.data);
+
+                    updateCart();
+
+                } else {
+
+                }
+            });
+
+        }       	
+    };
 
     //remove from cart
-    var removeCart = function (itemId)
+    var removeCart = function (e)
     {
-        var data = {item_id: itemId};
-        cartProgress(true);
+        e.preventDefault();
+        var href = jQuery(this).attr('href');
+        var itemId = href.replace(/^(.+)\/id\/(\d+)\/uenc.+$/,'$2');
+        itemId = parseInt(itemId);
 
-        jQuery.post(_removeItemUrl, data, function (res) {
+        if (!isNaN(itemId)) {
 
-            if (!res.error) {
+            var data = {item_id: itemId};
+            cartProgress(true);
 
-                var topCartHtml = res.data.top_cart_html;
-                jQuery('.top-cart').replaceWith(topCartHtml);
-                updateCart();
+            jQuery.post(_storeUrl + 'removeitem', data, function (res) {
 
-            } else {
+                if (!res.error) {
 
-            }
-        });
+                	updateHeaderCart(res.data);
+
+                    updateCart();
+
+                } else {
+
+                }
+            });
+
+        }    	
+
     };
 
     return {
         init: function (options)
         {
             //set vars
-            _searchUrl = options.searchUrl;
-            _addtocartUrl = options.addtocartUrl;
-            _cartUrl = options.cartUrl;
-            _removeItemUrl = options.removeItemUrl;
-            _searchForm = options.searchForm;
+            _storeUrl = options.storeUrl;
             _addtocartForm = options.addtocartForm;
             _cartForm = options.cartForm;
+            _searchForm = options.searchForm;
             _searchProgress = options.searchProgress;
             _addtocartProgress = options.addtocartProgress;
             _cartProgress = options.cartProgress;
             _partsearchButton = options.partsearchButton;
             _checkoutButton = options.checkoutButton;
-
-            jQuery(function () {
-
-                updateCart();
-            });
+            
+            initCartHandlers();            
 
         },
         search: function ()
