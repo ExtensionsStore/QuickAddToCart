@@ -21,7 +21,7 @@ var quickaddtocart = function ()
     var _cartForm;
 
     //buttons
-    var _partsearchButton
+    var _quickaddtocartsearchButton
     var _checkoutButton;
 
     //progress selectors
@@ -32,395 +32,149 @@ var quickaddtocart = function ()
     var _searching = false;
     var _addingtocart = false;
 
-    //pagination
-    var _displayItems = 3;
-    var _count = 0;
-    var _items = 0;
-    var limit = 9;
-    var p = 1;
-
     //perform search
-    var search = function ()
+    var search = function (url)
     {
         if (!_searching) {
 
             jQuery(_searchProgress).css('display', 'inline-block');
-            jQuery(_partsearchButton).attr('disabled', 'disabled');
+            jQuery(_quickaddtocartsearchButton).attr('disabled', 'disabled');
             _searching = true;
             var $message = jQuery(_addtocartForm).find('.message');
             $message.html('');
 
             var data = jQuery(_searchForm).serialize(true);
-            //reset previous results
-            reset();
-            _items = 0;
-            _count = 0;
-
-            postSearch(data);
-        }
-    };
-
-    //post search request
-    var postSearch = function (data, callback)
-    {
-        jQuery.post(_storeUrl + 'search', data, function (res) {
-
-            jQuery(_addtocartForm).show();
-            var $message = jQuery(_addtocartForm).find('.message');
-
-            if (res.count > 0) {
-                _count = res.count;
-                var $items = jQuery('.items');
-                //new search
-                if ($message.html() == '') {
-                    $items.css('left', 0);
-                    $message.html(' Found ' + res.count + ' items ');
-                }
-                var items = res.items;
-                _items += items.length;
-                display(items);
-            } else {
-                $message.html('No results were found. Please try again.');
+            var q = jQuery('#quickaddtocart-query').val();
+            
+            if (!url){
+            	
+            	url = _storeUrl + 'search?q=' + encodeURIComponent(q);
             }
 
-            if (jQuery('.part-result').length > 0) {
-                jQuery('.part-results').show();
-            } else {
-                jQuery('.part-results').hide();
-            }
+            jQuery.post(url, data, function (res) {
 
-            jQuery(_searchProgress).hide();
-            jQuery(_partsearchButton).removeAttr('disabled');
-            _searching = false;
+                jQuery(_addtocartForm).show();
+                jQuery('.quickaddtocart-results-items').html(res.data);
+                jQuery('.quickaddtocart-results').show();
 
-            if (typeof callback === 'function') {
-                callback();
-            }
+                if (res.count > 0) {
+                    initResultHandlers(res);
+                } 
 
-        });
-    };
+                jQuery(_searchProgress).hide();
+                jQuery(_quickaddtocartsearchButton).removeAttr('disabled');
+                _searching = false;
 
-    //clear out unchecked previous results
-    var reset = function ()
-    {
-        jQuery('.part-checkbox').each(function () {
-
-            //@todo removed per TH
-            var checked = false; //jQuery(this).is(':checked');
-
-            if (!checked) {
-
-                jQuery(this).parents('.part-result').remove();
-
-            } else {
-
-            }
-
-        });
-
-        if (jQuery('.part-result').length == 0) {
-            jQuery(_addtocartForm).hide();
+            });
         }
-    };
-
-    //scroll results
-    var scroll = function (e)
-    {
-        e.preventDefault();
-        var op;
-        var next = jQuery(this).hasClass('next');
-        var prev = jQuery(this).hasClass('prev');
-        var scrollable = false;
-        var $message = jQuery(_addtocartForm).find('.message');
-
-        var $items = jQuery('.items');
-        $items.attr('pages', p);
-        //widths
-        var itemsWidth = $items.outerWidth();
-        var itemWidth = $items.find('.part-result:eq(0)').outerWidth();
-        var displayWidth = itemWidth * _displayItems;
-        //current pos
-        var itemsLeft = parseInt($items.css('left'), 10);
-
-        //add previous on next
-        if (next && jQuery(_addtocartForm).find('.prev').length == 0) {
-            $message.prepend('<a href="#" class="prev">&lsaquo; Prev</a>');
-            jQuery('.prev').click(scroll);
-        } else if (prev && itemsLeft + displayWidth >= 0) {
-            $message.find('.prev').remove();
-        }
-
-        //scroll left or right
-        if (next) {
-
-            op = '-';
-
-            if (Math.abs(itemsLeft) < itemsWidth - displayWidth) {
-
-                scrollable = true;
-
-            } else if (_items < _count) {
-
-                var data = {};
-                data.q = jQuery('#part').val();
-                data.p = ++p;
-                data.limit = limit;
-
-                var callback = function () {
-                    animate(op, displayWidth);
-                    $items.attr('pages', p);
-                };
-
-                jQuery(_searchProgress).show();
-                postSearch(data, callback);
-            }
-
-        } else if (prev) {
-
-            op = '+';
-
-            if (itemsLeft < 0) {
-                scrollable = true;
-            }
-        }
-
-        if (scrollable) {
-            animate(op, displayWidth);
-        }
-
-    };
-
-    var animate = function (op, displayWidth)
-    {
-        var $items = jQuery('.items');
-        var itemWidth = $items.find('.part-result:eq(0)').outerWidth();
-
-        var left = op + "=" + displayWidth;
-
-        $items.animate({
-            left: left
-        }, 500, 'swing', function () {
-
-            var itemsLeft = parseInt($items.css('left'), 10);
-            var curPage = (itemsLeft < 0) ? Math.ceil(Math.abs(itemsLeft) / (itemWidth * limit)) : 1;
-
-            $items.attr('cur_page', curPage);
-        });
-    };
-
-    //display results
-    var display = function (items)
-    {
-        var $items = jQuery(_addtocartForm).find('.items');
-
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var productId = item.id;
-
-            if (jQuery('#part-' + productId).length == 0) {
-
-                var name = item.name;
-                var image = item.image;
-                var sku = item.sku;
-                var price = item.price;
-                var finalPrice = item.final_price;
-                var inventories = item.inventories;
-                var url = item.url;
-
-                //result container
-                var partResult = document.createElement('li');
-                partResult.className = 'part-result';
-                partResult.id = 'part-' + productId;
-                partResult.setAttribute('p', p);
-
-                //result image
-                var partImage = document.createElement('div');
-                partImage.className = 'part-image';
-                var partImageA = document.createElement('a');
-                partImageA.href = url;
-                var partImg = document.createElement('img');
-                partImg.src = image;
-                partImageA.appendChild(partImg);
-                partImage.appendChild(partImageA);
-                partResult.appendChild(partImage);
-
-                //result name
-                var partName = document.createElement('div');
-                partName.className = 'part-name';
-                var partNameA = document.createElement('a');
-                partNameA.href = url;
-                partNameA.appendChild(document.createTextNode(name));
-                partName.appendChild(partNameA);
-                partResult.appendChild(partName);
-
-                //result sku
-                var partSku = document.createElement('div');
-                partSku.className = 'part-sku';
-                var partSkuLabel = document.createElement('label');
-                partSkuLabel.appendChild(document.createTextNode('SKU: '));
-                partSku.appendChild(partSkuLabel);
-                partSku.appendChild(document.createTextNode(sku));
-                partResult.appendChild(partSku);
-
-                //result inventories
-                /*var partInventory = document.createElement('div');
-                 partInventory.className = 'part-inventory';
-                 var partInventoryLabel = document.createElement('label');
-                 partInventoryLabel.appendChild(document.createTextNode('Availability: '));
-                 partInventory.appendChild(partInventoryLabel);
-                 partInventory.appendChild(document.createElement('br'));
-                 var qtys = 0;
-                 for (var j=0; j<inventories.length; j++){
-                 
-                 var inventory = inventories[j];
-                 var warehouse = inventory.warehouse;
-                 var qty = inventory.qty;
-                 qtys += parseInt(qty);
-                 var text = warehouse + ': '+ qty + '';
-                 var inventoryText = document.createTextNode(text);
-                 partInventory.appendChild(inventoryText);
-                 var inventoryTextBr = document.createElement('br');
-                 partInventory.appendChild(inventoryTextBr);
-                 }
-                 partResult.appendChild(partInventory);*/
-
-                // prices
-                var partFinalPrice = document.createElement('div');
-                partFinalPrice.className = 'part-price-final';
-                var partFinalPriceLabel = document.createElement('label');
-                partFinalPriceLabel.appendChild(document.createTextNode('Price: '));
-                partFinalPrice.appendChild(partFinalPriceLabel);
-                partFinalPrice.appendChild(document.createTextNode(finalPrice));
-                partResult.appendChild(partFinalPrice);
-
-                //add to cart
-                var partAddToCart = document.createElement('div');
-                partAddToCart.className = 'part-addtocart';
-                var partQtyLabel = document.createElement('label');
-                partQtyLabel.className = 'part-qty-label';
-                var partQty = document.createElement('input');
-                partQty.type = 'text';
-                partQty.id = 'part_qty_' + productId;
-                partQty.className = 'part-qty input-text qty';
-                partQty.name = 'part[qty][]';
-                var qtys = 1;
-                if (qtys <= 0) {
-                    partQty.disabled = true;
-                    partQty.value = 0;
-                } else {
-                    partQty.value = 1;
-                }
-                partQtyLabel.appendChild(document.createTextNode('Qty: '));
-                partQtyLabel.appendChild(partQty);
-                partAddToCart.appendChild(partQtyLabel);
-
-                var partCheckboxLabel = document.createElement('label');
-                partCheckboxLabel.className = 'part-checkbox-label';
-                var partCheckbox = document.createElement('input');
-                partCheckbox.type = 'checkbox';
-                partCheckbox.className = 'part-checkbox';
-                partCheckbox.style.display = 'none';
-                partCheckbox.name = 'part[id][]';
-                partCheckbox.value = productId;
-                if (qtys == 0) {
-                    jQuery(partCheckbox).attr('disabled', 'disabled');
-                }
-                partCheckboxLabel.appendChild(partCheckbox);
-
-                var partButton = document.createElement('input');
-                partButton.type = 'button';
-                partButton.className = 'button part-button';
-                partButton.name = 'part[button][]';
-                partButton.value = 'Add';
-                if (qtys <= 0) {
-                    jQuery(partButton).attr('disabled', 'disabled');
-                }
-                partButton.onclick = function (e) {
-                    var $checkbox = jQuery(this).parent().find('.part-checkbox');
-                    $checkbox.prop('checked', true);
-                    add($checkbox);
-                };
-                partCheckboxLabel.appendChild(partButton);
-
-                partAddToCart.appendChild(partCheckboxLabel);
-
-                partResult.appendChild(partAddToCart);
-
-                $items.append(partResult);
-            }
-
-        }
-
-        //scroll width
-        var itemWidth = $items.find('.part-result:eq(0)').outerWidth();
-        var itemsWidth = itemWidth * _items;
-        $items.css('width', itemsWidth + 'px');
-
-        var $nexts = jQuery('.next');
-
-        //scroll results
-        if (_items > _displayItems && jQuery('.next').length == 0) {
-
-            var $message = jQuery(_addtocartForm).find('.message');
-            $message.append('<a href="#" class="next">Next &rsaquo;</a>');
-            jQuery('.next').click(scroll);
-        }
-
     };
     
+    //remove inline handlers and handle
+    var initResultHandlers = function(res)
+    {
+    	//toolbar
+    	jQuery('.toolbar select').prop('onchange',null).change(navigation);
+    	jQuery('.toolbar a').click(navigation);
+    	
+    	//layer
+    	jQuery('.block-layered-nav a').click(navigation);
+    	
+    	//products list
+    	jQuery('.category-products .btn-cart').prop('onclick',null).click(addToCart);
+    	jQuery('.category-products .link-wishlist').click(addToWishlist);
+    	jQuery('.category-products .link-compare').click(addToCompare);
+    	//configurable
+    	var addToCartText = res.translate['Add to Cart'];
+    	jQuery('.category-products .actions').find('a.button').attr('title',addToCartText).text(addToCartText).click(addToCart);
+    };
+    
+    //handle navigation selection
+    var navigation = function(e)
+    {
+    	e.preventDefault();
+    	e.stopPropagation();
+     	e.stopImmediatePropagation();
+    	
+    	var $toolbarEle = jQuery(this);
+    	
+    	var elementType = $toolbarEle.prop('tagName');
+    	var location;
+    	
+    	if (elementType == 'SELECT'){
+    		
+    		location = $toolbarEle.val();
+    		
+    	} else if (elementType == 'A') {
+    		
+    		location = $toolbarEle.attr('href');
+    	}
+    	
+    	if (location){
+    		search(location);
+    	}
+    	
+    };
+
     //init remove and qty
     var initCartHandlers = function()
     {
         jQuery('.cart input.qty').change(editQty);
         jQuery('.btn-remove').click(removeCart);
     };
+    
+    //add to wishlist
+    var addToWishlist = function(e)
+    {
+    	e.preventDefault();
+    	e.stopPropagation();
+     	e.stopImmediatePropagation();
+    	
+    };
+    
+    //add to compare
+    var addToCompare = function(e)
+    {
+    	e.preventDefault();
+    	e.stopPropagation();
+     	e.stopImmediatePropagation();
+    	
+    };    
 
     //add one to cart
-    var add = function ($checkbox)
+    var addToCart = function (e)
     {
+    	e.preventDefault();
+    	e.stopPropagation();
+     	e.stopImmediatePropagation();
+
         cartProgress(true);
-        var productId = $checkbox.val();
-        var qty = jQuery('#part_qty_' + productId).val();
-        var item = {product_id: productId, qty: qty}
-        var data = {count: 0, items: []};
-        data.count = 1;
-        data.items.push(item);
-
-        post(data);
-    };
-
-    //add to cart
-    var addtocart = function (e)
-    {
-        if (!_addingtocart) {
-
-            var $addtocartButton = jQuery(this);
-            $addtocartButton.attr('disabled', 'disabled');
-            _addingtocart = true;
-
+        
+    	var elementType = jQuery(this).prop('tagName');
+    	var location;
+    	
+    	//add to cart button
+    	if (elementType == 'BUTTON'){
+    		
+    		location = this.getAttribute('onclick');
+    		
+    	} else if (elementType == 'A') { //configurable link
+    		
+    		//get product id
+    		var $productInfo = jQuery(this).parents('.product-info');
+    		location = $productInfo.find('.link-wishlist').attr('href');
+    	}
+    	
+    	if (location){
+    		
+            var productId = location.replace(/^(.+)\/product\/(\d+)\/form_key\/(.+)$/,'$2');
+            var qty = 1;
+            var item = {product_id: productId, qty: qty}
             var data = {count: 0, items: []};
+            data.count = 1;
+            data.items.push(item);
 
-            jQuery('.part-checkbox:checked').each(function () {
-
-                if (!jQuery(this).hasClass('part-added')) {
-
-                    var productId = jQuery(this).val();
-                    var qty = jQuery('#part_qty_' + productId).val();
-
-                    var item = {product_id: productId, qty: qty}
-
-                    data.items.push(item);
-                    data.count++;
-                }
-
-            });
-
-            if (data.count > 0) {
-
-                post(data);
-            }
-
-        }
+            post(data);
+    	}        
 
     };
 
@@ -433,16 +187,14 @@ var quickaddtocart = function ()
 
             	updateHeaderCart(res.data);
 
-                //flag added parts
-                jQuery('.part-checkbox').addClass('part-added');
+                //flag added quickaddtocarts
+                jQuery('.quickaddtocart-checkbox').addClass('quickaddtocart-added');
 
                 //update cart
                 updateCart();
+            } 
 
-            } else {
-
-            }
-
+            cartProgress(false);
             jQuery(_addtocartProgress).hide();
             _addingtocart = false;
         });
@@ -481,7 +233,7 @@ var quickaddtocart = function ()
     var updateCart = function ()
     {
         var $cartForm = jQuery(_cartForm);
-        var $cartLoad = $cartForm.find('.part-cart-load');
+        var $cartLoad = $cartForm.find('.quickaddtocart-cart-load');
         cartProgress(true);
 
         if ($cartLoad.length > 0) {
@@ -502,7 +254,7 @@ var quickaddtocart = function ()
     var cartProgress = function (show)
     {
         var $cartForm = jQuery(_cartForm);
-        var $cartLoad = $cartForm.find('.part-cart-load');
+        var $cartLoad = $cartForm.find('.quickaddtocart-cart-load');
         var outerHeight = $cartLoad.outerHeight();
         var $cartProgress = jQuery(_cartProgress);
 
@@ -592,7 +344,7 @@ var quickaddtocart = function ()
             _searchProgress = options.searchProgress;
             _addtocartProgress = options.addtocartProgress;
             _cartProgress = options.cartProgress;
-            _partsearchButton = options.partsearchButton;
+            _quickaddtocartsearchButton = options.quickaddtocartsearchButton;
             _checkoutButton = options.checkoutButton;
             
             initCartHandlers();            

@@ -1,0 +1,26 @@
+<?php
+/**
+ * Quickaddtocart search template
+ *
+ * @category    Aydus
+ * @package     Aydus_QuickAddToCart
+ * @author     	Aydus Consulting <davidt@aydus.com>
+ */
+?>
+<div class="main-container col3-layout">
+    <div class="main">
+        <div class="col-wrapper">
+            <?php // This left_first block will display above the main content on smaller viewports ?>
+            <?php if ($_leftContent = $this->getChildHtml('left_first')): ?>
+                <div class="col-left sidebar col-left-first"><?php echo $_leftContent;   ?></div>
+            <?php endif; ?>
+            <div class="col-main">
+                <?php echo $this->getChildHtml('content') ?>
+            </div>
+            <div class="col-left sidebar"><?php echo $this->getChildHtml('left') ?></div>
+        </div>
+        <div class="col-right sidebar"><?php echo $this->getChildHtml('right') ?></div>
+    </div>
+</div>
+        
+

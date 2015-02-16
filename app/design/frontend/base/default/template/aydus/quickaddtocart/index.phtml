@@ -13,32 +13,31 @@
 		<h1>Quick Add To Cart</h1>
 	</div>
 
-	<form id="part_search">
+	<form id="quickaddtocart_search">
 
-		<div class="part-search">
+		<div class="quickaddtocart-search">
 		
-			<div class="part-search-input">
-				<input type="text" id="part" name="q" value="<?php echo $this->getQuery() ?>" placeholder="Search for Products Here..." class="input-text" maxlength="128" autocomplete="off" />
-                <button class="button"><span><span>Search</span></span></button>
+			<div class="input-box quickaddtocart-search-input">
+				<input type="text" id="quickaddtocart-query" name="q" value="<?php echo $this->getQuery() ?>" placeholder="Search entire store here..." class="input-text required-entry" maxlength="128" autocomplete="off" />
+                <button type="submit" class="button quickaddtocart-search-button"><span><span>Search</span></span></button>
 				<img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="progress search-progress" />
 			</div>
 	
-			<div id="part_autocomplete"></div>		
+			<div id="quickaddtocart_autocomplete"></div>		
 		</div>
 
 	</form>
 	
-	<div class="part-border"></div>
+	<div class="quickaddtocart-border"></div>
 
-	<form id="part_form">
+	<form id="quickaddtocart_form">
 		<div class="page-title title-buttons">
 			<h3>Search Results</h3>
-			<div class="message"></div>
 		</div>
 				
-		<div class="part-results">
+		<div class="quickaddtocart-results">
 					
-			<div class="part-results-items">
+			<div class="quickaddtocart-results-items">
 				<ul class="items"></ul>
 			</div>
 			
@@ -48,19 +47,19 @@
 				
 	</form>
 	
-	<div class="part-border"></div>
+	<div class="quickaddtocart-border"></div>
 	
-	<form id="part_cart">
+	<form id="quickaddtocart_cart">
 		<div class="page-title title-buttons">
 			<h3>Cart Summary</h3>
 		</div>
 
-		<div class="part-cart">
-			<div class="part-cart-loading">
-			    <span class="part-cart-progress"></span>
+		<div class="quickaddtocart-cart">
+			<div class="quickaddtocart-cart-loading">
+			    <span class="quickaddtocart-cart-progress"></span>
 				<img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="cart-progress" />
 			</div>
-			<div class="part-cart-load">
+			<div class="quickaddtocart-cart-load">
                 <?php echo $this->getChildHtml('checkout.cart') ?>
 			</div>
 		</div>
@@ -72,24 +71,24 @@
 //<![CDATA[
     var options = {
         storeUrl : "<?php echo $this->getUrl('quickaddtocart/index') ?>",
-        searchForm : "#part_search",
-        addtocartForm : "#part_form",
-        cartForm : "#part_cart",
+        searchForm : "#quickaddtocart_search",
+        addtocartForm : "#quickaddtocart_form",
+        cartForm : "#quickaddtocart_cart",
         searchProgress : ".search-progress",
-        cartProgress : ".part-cart-loading",
-        partsearchButton : ".partsearch-button",
+        cartProgress : ".quickaddtocart-cart-loading",
+        quickaddtocartsearchButton : ".quickaddtocart-search-button",
         checkoutButton : ".checkout-button"
     };
     quickaddtocart.init(options);
     
     //prevent form submit, start ajax search
-    new Event.observe("part_search", "submit", function(e){
+    new Event.observe("quickaddtocart_search", "submit", function(e){
         e.stop();
         quickaddtocart.search();
     });
 
     //prevent form submit, add to cart is via ajax
-    new Event.observe("part_form", "submit", function(e){
+    new Event.observe("quickaddtocart_form", "submit", function(e){
         e.stop();
     });
 //]]>

@@ -11,17 +11,17 @@
 #quickaddtocart {
 }
  
-.part-border {
+.quickaddtocart-border {
 	clear: both;
 }
 
-.part-search-text {
+.quickaddtocart-search-text {
 	list-style: decimal;
 	list-style-position: inside;
 	padding-bottom: 12px;
 }
 
-.part-search-input {
+.quickaddtocart-search-input {
 	padding-bottom: 12px;
 }
 
@@ -29,22 +29,21 @@
 	display: none;
 }
 
-#part_form {
+#quickaddtocart_form {
 	display: none;
 }
 
-#part_form .message {
+#quickaddtocart_form .message {
 	padding-bottom: 10px;
 }
 
-.part-results {
+.quickaddtocart-results {
 	display: none;
 }
 
-.part-results-items {
+.quickaddtocart-results-items {
 	width: 100%;
 	margin-bottom: 20px;
-	overflow-x: scroll;
 }
 
 .items {
@@ -53,34 +52,34 @@
 	overflow: hidden;
 }
 
-.part-result {
+.quickaddtocart-result {
 	width: 238px;
 	float: left;
 	padding: 0 0 10px 0;
 }
 
-.part-result label {
+.quickaddtocart-result label {
 	padding-right: 3px;
 	font-weight: bold;
 }
 
-.part-image img {
+.quickaddtocart-image img {
 	width: 135px;
 	height: 135px;
 }
 
-.part-form-button-container {
+.quickaddtocart-form-button-container {
 	clear: both;
 	width: 100%;
 	padding: 10px 0 10px 0;
 }
 
-.part-form-button  {
+.quickaddtocart-form-button  {
 	margin: 0 auto 10px;
 	float: left;
 }	
 
-.part-form-checkout {
+.quickaddtocart-form-checkout {
 	float: right;
 }
 
@@ -88,44 +87,44 @@
 	display: none;
 }
 
-.part-results-items, .part-name, .part-sku, .part-addtocart {
+.quickaddtocart-results-items, .quickaddtocart-name, .quickaddtocart-sku, .quickaddtocart-addtocart {
 	padding-top: 10px;
 }
 
-.part-name a {
+.quickaddtocart-name a {
 	font-weight: bold;
 }
 		
-.part-checkbox {
+.quickaddtocart-checkbox {
 	margin-right: 6px;
 }
 
-.part-button {
+.quickaddtocart-button {
 	margin-left: 0;
 }
 
-.part-qty-label {
+.quickaddtocart-qty-label {
 	font-weight: bold;
 	float: left;
 	margin-right: 15px;
 }
 
-.part-qty {
+.quickaddtocart-qty {
 	width: 15px;
 }
 
-#part_cart .page-title {
+#quickaddtocart_cart .page-title {
 	margin-bottom: 0;
 }
 
-.part-cart {
+.quickaddtocart-cart {
 	position: relative;
 }
 
-.part-cart .cart-table {
+.quickaddtocart-cart .cart-table {
 }
 
-.part-cart-loading {
+.quickaddtocart-cart-loading {
 	display: none;
 	background-color: white;
 	opacity: .6;
@@ -140,7 +139,7 @@
     text-align: center;  
 }
 
-.part-cart-progress {
+.quickaddtocart-cart-progress {
     display: inline-block;
     height: 100%;
     vertical-align: middle;
@@ -168,6 +167,6 @@
 	text-align: center;
 }
 
-#part_cart .checkout-button {
+#quickaddtocart_cart .checkout-button {
 	float: right;
 }

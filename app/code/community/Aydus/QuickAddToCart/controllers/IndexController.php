@@ -42,78 +42,62 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
      * Get search results
      */
     public function searchAction() {
-        $p = ((int) $this->getRequest()->getParam('p')) ? (int) $this->getRequest()->getParam('p') : 1;
-        $limit = ((int) $this->getRequest()->getParam('limit')) ? (int) $this->getRequest()->getParam('limit') : 9;
+
+        $result = array();
         $query = Mage::helper('catalogsearch')->getQuery();
-        $query->prepare();
-
-        $items = array();
-        $count = 0;
-
-        if ($query->getQueryText()) {
-
-            $q = $query->getQueryText();
-            $cache = Mage::app()->getCache();
-            $itemsKey = md5(get_class($this) . '_' . $q . '_' . $p . '_' . $limit);
-            $items = unserialize($cache->load($itemsKey));
-            $countKey = md5(get_class($this) . '_' . $q);
-            $count = unserialize($cache->load($countKey));
-
-            if (!$items) {
-
-                $fulltextModel = Mage::getModel('catalogsearch/fulltext');
-                $fulltextResource = Mage::getResourceModel('catalogsearch/fulltext');
-                $fulltextResource->prepareResult($fulltextModel, $q, $query);
-
-                $collection = Mage::getResourceModel('catalog/product_collection');
-                $searchResultTable = $collection->getTable('catalogsearch/result');
-                $select = $collection->getSelect();
-                $select->joinInner(
-                        array('search_result' => $searchResultTable), $collection->getConnection()->quoteInto('search_result.product_id = e.entity_id AND search_result.query_id = ?', $query->getId()), array('relevance' => 'relevance')
-                );
-
-                if ($collection->getSize() > 0) {
-
-                    $collection->setPageSize($limit);
-                    $collection->setCurPage($p);
-
-                    $count = $collection->getSize();
-                    $helper = Mage::helper('core');
-
-                    foreach ($collection as $product) {
-
-                        $product->load($product->getId());
-
-                        $productData = array(
-                            "id" => $product->getId(),
-                            "name" => $product->getName(),
-                            "description" => $product->getShortDescription(),
-                            "url" => $product->getProductUrl(),
-                            "sku" => $product->getSku(),
-                            "final_price" => $helper->formatPrice($product->getFinalPrice(), false) . ' ' . $currencyCode,
-                            "price" => $helper->formatPrice($product->getInitialPrice(), false) . ' ' . $currencyCode,
-                            "image" => Mage::helper('catalog/image')->init($product, 'small_image')->resize(166)->__toString(),
-                        );
-
-                        $items[] = $productData;
-                    }
-
-                    $cache->save(serialize($count), $countKey, array(), 604800);
-                    $cache->save(serialize($items), $itemsKey, array(), 604800);
+        
+        $query->setStoreId(Mage::app()->getStore()->getId());
+        
+        if ($query->getQueryText() != '') {
+            
+            if (Mage::helper('catalogsearch')->isMinQueryLength()) {
+                $query->setId(0)
+                ->setIsActive(1)
+                ->setIsProcessed(1);
+            }
+            else {
+                if ($query->getId()) {
+                    $query->setPopularity($query->getPopularity()+1);
+                }
+                else {
+                    $query->setPopularity(1);
+                }
+        
+                if ($query->getRedirect()){
+                    $query->save();
+                    $this->getResponse()->setRedirect($query->getRedirect());
+                    return;
+                }
+                else {
+                    $query->prepare();
                 }
             }
-
+                       
+            Mage::helper('catalogsearch')->checkNotes();
+            
+            $this->loadLayout();
+            $layout = $this->getLayout();
+            $root = $layout->getBlock('root');
+            $searchResult = $layout->getBlock('search.result');
+            
+            $result['error'] = false;
+            $result['count'] = $searchResult->getResultCount();
+            $result['data'] = $root->toHtml();
+            $result['translate'] = array(
+                    'Add to Cart' => Mage::helper('catalog')->__('Add to Cart')
+            );
+                                                
             if (!Mage::helper('catalogsearch')->isMinQueryLength()) {
                 $query->save();
             }
+            
+        } else {
+            $result['error'] = true;
+            $result['data'] = 'No query submitted';
         }
-
-        $searchResultsObj = new StdClass();
-        $searchResultsObj->count = $count;
-        $searchResultsObj->items = $items;
-        $searchResultsJson = json_encode($searchResultsObj);
-
-        $this->getResponse()->setHeader('Content-type', 'application/json')->setBody($searchResultsJson);
+                
+        $this->getResponse()->setHeader('Content-type', 'application/json')->setBody(json_encode($result));
+        
     }
 
     /**

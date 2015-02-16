@@ -58,12 +58,5 @@
                 <class>Aydus_QuickAddToCart_Helper</class>
             </aydus_quickaddtocart>
         </helpers>   
-        <resources>
-            <aydus_quickaddtocart_setup>
-                <setup>
-                    <module>Aydus_QuickAddToCart</module>
-                </setup>
-            </aydus_quickaddtocart_setup>
-        </resources>
     </global>   
 </config>
