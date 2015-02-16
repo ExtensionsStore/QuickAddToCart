@@ -7,5 +7,6 @@
  * @author     	Aydus Consulting <davidt@aydus.com>
  */
 ?>
+<h3><?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $this->helper('catalogsearch')->getEscapedQueryText()) ?></h3>
 
 <?php echo $this->getProductListHtml() ?>

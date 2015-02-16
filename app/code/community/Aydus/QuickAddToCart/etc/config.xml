@@ -11,7 +11,7 @@
 <config>
     <modules>
         <Aydus_QuickAddToCart>
-            <version>1.0.0</version>
+            <version>0.9.0</version>
         </Aydus_QuickAddToCart>
     </modules>
     <frontend>

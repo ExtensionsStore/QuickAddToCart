@@ -8,12 +8,8 @@
 
 var quickaddtocart = function ()
 {
-    //urls to quickaddtocart controller
-    var _storeUrl;
-    var _searchUrl;
-    var _addtocartUrl;
-    var _cartUrl;
-    var _removeItemUrl;
+    //quickaddtocart controller
+    var _controllerUrl;
 
     //forms
     var _searchForm;
@@ -48,7 +44,7 @@ var quickaddtocart = function ()
             
             if (!url){
             	
-            	url = _storeUrl + 'search?q=' + encodeURIComponent(q);
+            	url = _controllerUrl + 'search?q=' + encodeURIComponent(q);
             }
 
             jQuery.post(url, data, function (res) {
@@ -85,7 +81,12 @@ var quickaddtocart = function ()
     	jQuery('.category-products .link-compare').click(addToCompare);
     	//configurable
     	var addToCartText = res.translate['Add to Cart'];
-    	jQuery('.category-products .actions').find('a.button').attr('title',addToCartText).text(addToCartText).click(addToCart);
+    	jQuery('.category-products .actions, .category-products .action').find('a.button').attr('title',addToCartText).text(addToCartText).click(addToCart);
+        
+        if (MenuManager){
+            MenuManager.init();
+        }
+        
     };
     
     //handle navigation selection
@@ -181,7 +182,7 @@ var quickaddtocart = function ()
     //post items to cart
     var post = function (data)
     {
-        jQuery.post(_storeUrl + 'addtocart', data, function (res) {
+        jQuery.post(_controllerUrl + 'addtocart', data, function (res) {
 
             if (!res.error) {
 
@@ -237,7 +238,7 @@ var quickaddtocart = function ()
         cartProgress(true);
 
         if ($cartLoad.length > 0) {
-            $cartLoad.load(_storeUrl + 'cart', function (response, status, xhr) {
+            $cartLoad.load(_controllerUrl + 'cart', function (response, status, xhr) {
                 if (status == 'success') {
 
                 	initCartHandlers();
@@ -287,7 +288,7 @@ var quickaddtocart = function ()
             var data = {item_id: itemId, qty: qty};
             cartProgress(true);
 
-            jQuery.post(_storeUrl + 'editqty', data, function (res) {
+            jQuery.post(_controllerUrl + 'editqty', data, function (res) {
 
                 if (!res.error) {
 
@@ -316,7 +317,7 @@ var quickaddtocart = function ()
             var data = {item_id: itemId};
             cartProgress(true);
 
-            jQuery.post(_storeUrl + 'removeitem', data, function (res) {
+            jQuery.post(_controllerUrl + 'removeitem', data, function (res) {
 
                 if (!res.error) {
 
@@ -337,7 +338,7 @@ var quickaddtocart = function ()
         init: function (options)
         {
             //set vars
-            _storeUrl = options.storeUrl;
+            _controllerUrl = options.controllerUrl;
             _addtocartForm = options.addtocartForm;
             _cartForm = options.cartForm;
             _searchForm = options.searchForm;

@@ -8,88 +8,101 @@
  */
 ?>
 <div id="quickaddtocart">
+    
+    <div class="page-title title-buttons">
+        <h1>Quick Add To Cart</h1>
+    </div>
 
-	<div class="page-title title-buttons">
-		<h1>Quick Add To Cart</h1>
-	</div>
+    <form id="quickaddtocart_search" class="quickaddtocart-form">
+        
+        <div class="col3-layout">
+            <div class="main">
+                <div class="col-wrapper">
+                    <div class="col-main">
+                        <div class="page-title title-buttons">
+                            <h3>Search</h3>
+                        </div>
+                        <div class="quickaddtocart-search">
 
-	<form id="quickaddtocart_search">
+                            <div class="input-box quickaddtocart-search-input">
+                                <input type="text" id="quickaddtocart-query" name="q" value="<?php echo $this->getQuery() ?>" placeholder="Search entire store here..." class="input-text required-entry" maxlength="128" autocomplete="off" />
+                                <button type="submit" class="button quickaddtocart-search-button"><span><span>Search</span></span></button>
+                                <img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="progress search-progress" />
+                            </div>
 
-		<div class="quickaddtocart-search">
-		
-			<div class="input-box quickaddtocart-search-input">
-				<input type="text" id="quickaddtocart-query" name="q" value="<?php echo $this->getQuery() ?>" placeholder="Search entire store here..." class="input-text required-entry" maxlength="128" autocomplete="off" />
-                <button type="submit" class="button quickaddtocart-search-button"><span><span>Search</span></span></button>
-				<img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="progress search-progress" />
-			</div>
-	
-			<div id="quickaddtocart_autocomplete"></div>		
-		</div>
+                        </div>
+                    </div>
+                    <div class="col-left sidebar"></div>
+                </div>
+                <div class="col-right sidebar"></div>
+            </div>
+        </div>        
 
-	</form>
-	
-	<div class="quickaddtocart-border"></div>
+    </form>
 
-	<form id="quickaddtocart_form">
-		<div class="page-title title-buttons">
-			<h3>Search Results</h3>
-		</div>
-				
-		<div class="quickaddtocart-results">
-					
-			<div class="quickaddtocart-results-items">
-				<ul class="items"></ul>
-			</div>
-			
-			<div class="clear"></div>
+    <form id="quickaddtocart_form" class="quickaddtocart-form">
 
-		</div>
-				
-	</form>
-	
-	<div class="quickaddtocart-border"></div>
-	
-	<form id="quickaddtocart_cart">
-		<div class="page-title title-buttons">
-			<h3>Cart Summary</h3>
-		</div>
+        <div class="quickaddtocart-results">
 
-		<div class="quickaddtocart-cart">
-			<div class="quickaddtocart-cart-loading">
-			    <span class="quickaddtocart-cart-progress"></span>
-				<img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="cart-progress" />
-			</div>
-			<div class="quickaddtocart-cart-load">
-                <?php echo $this->getChildHtml('checkout.cart') ?>
-			</div>
-		</div>
-	</form>
-	
+            <div class="quickaddtocart-results-items">
+            </div>
+
+        </div>
+
+    </form>
+
+    <form id="quickaddtocart_cart" class="quickaddtocart-form">
+        
+        <div class="col3-layout">
+            <div class="main">
+                <div class="col-wrapper">
+                    <div class="col-main">
+                        <div class="page-title title-buttons">
+                            <h3>Cart Summary</h3>
+                        </div>
+                        <div class="quickaddtocart-cart">
+                            <div class="quickaddtocart-cart-loading">
+                                <span class="quickaddtocart-cart-progress"></span>
+                                <img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="cart-progress" />
+                            </div>
+                            <div class="quickaddtocart-cart-load">
+                                <?php echo $this->getChildHtml('checkout.cart') ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-left sidebar"><?php echo $this->getChildHtml('left') ?></div>
+                </div>
+                <div class="col-right sidebar"><?php echo $this->getChildHtml('right') ?></div>
+            </div>
+        </div>
+
+    </form>
+
 </div>
 
 <script type="application/javascript">
-//<![CDATA[
+    //<![CDATA[
     var options = {
-        storeUrl : "<?php echo $this->getUrl('quickaddtocart/index') ?>",
-        searchForm : "#quickaddtocart_search",
-        addtocartForm : "#quickaddtocart_form",
-        cartForm : "#quickaddtocart_cart",
-        searchProgress : ".search-progress",
-        cartProgress : ".quickaddtocart-cart-loading",
-        quickaddtocartsearchButton : ".quickaddtocart-search-button",
-        checkoutButton : ".checkout-button"
+    controllerUrl : "<?php echo $this->getUrl('quickaddtocart/index') ?>",
+    searchForm : "#quickaddtocart_search",
+    addtocartForm : "#quickaddtocart_form",
+    cartForm : "#quickaddtocart_cart",
+    searchProgress : ".search-progress",
+    cartProgress : ".quickaddtocart-cart-loading",
+    quickaddtocartsearchButton : ".quickaddtocart-search-button",
+    checkoutButton : ".checkout-button"
     };
     quickaddtocart.init(options);
-    
+
     //prevent form submit, start ajax search
     new Event.observe("quickaddtocart_search", "submit", function(e){
-        e.stop();
-        quickaddtocart.search();
+    e.stop();
+    quickaddtocart.search();
     });
 
     //prevent form submit, add to cart is via ajax
     new Event.observe("quickaddtocart_form", "submit", function(e){
-        e.stop();
+    e.stop();
     });
-//]]>
+    //]]>
 </script>
