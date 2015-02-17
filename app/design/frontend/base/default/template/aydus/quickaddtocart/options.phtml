@@ -1,0 +1,42 @@
+<?php
+/**
+ * Quickaddtocart product options form
+ *
+ * @category    Aydus
+ * @package     Aydus_QuickAddToCart
+ * @author     	Aydus Consulting <davidt@aydus.com>
+ */
+?>
+
+<?php 
+$_product = $this->getProduct();
+?>
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+
+<form action="<?php echo $this->getUrl('quickaddtocart/index/addtocart') ?>" method="post" id="quickaddtocart_options_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+    <?php echo $this->getBlockHtml('formkey') ?>
+
+    <input type="hidden" name="count" value="1" />
+    <input type="hidden" name="items[0][product_id]" value="<?php echo $_product->getId() ?>" />
+    <?php echo $this->getChildHtml('product.info.options.wrapper') ?>
+    
+    <?php echo $this->getPriceHtml($_product); ?>
+    
+    <input type="text" pattern="\d*" name="items[0][qty]" maxlength="12" value="1" title="Qty" class="input-text required-entry qty">
+    <button type="submit" title="Add to Cart" class="button btn-cart"><span><span>Add to Cart</span></span></button>
+
+</form>
+
+<script type="text/javascript">
+//<![CDATA[
+    var quickAddToCartOptionsForm = new VarienForm('quickaddtocart_options_form');
+
+    new Event.observe("quickaddtocart_options_form", "submit", function(e){
+        e.stop();
+        quickaddtocart.submit(quickAddToCartOptionsForm);
+        });    
+    
+//]]>
+</script>

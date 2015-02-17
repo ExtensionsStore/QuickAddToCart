@@ -6,7 +6,7 @@
  * @author     	Aydus Consulting <davidt@aydus.com>
  */
 
-var quickaddtocart = function ($)
+function QuickAddToCart($)
 {
     //quickaddtocart controller
     var _controllerUrl;
@@ -33,32 +33,32 @@ var quickaddtocart = function ($)
     {
         if (!_searching) {
 
-            jQuery(_searchProgress).css('display', 'inline-block');
-            jQuery(_quickaddtocartsearchButton).attr('disabled', 'disabled');
+            $(_searchProgress).css('display', 'inline-block');
+            $(_quickaddtocartsearchButton).attr('disabled', 'disabled');
             _searching = true;
-            var $message = jQuery(_addtocartForm).find('.message');
+            var $message = $(_addtocartForm).find('.message');
             $message.html('');
 
-            var data = jQuery(_searchForm).serialize(true);
-            var q = jQuery('#quickaddtocart-query').val();
+            var data = $(_searchForm).serialize(true);
+            var q = $('#quickaddtocart-query').val();
             
             if (!url){
             	
             	url = _controllerUrl + 'search?q=' + encodeURIComponent(q);
             }
 
-            jQuery.post(url, data, function (res) {
+            $.post(url, data, function (res) {
 
-                jQuery(_addtocartForm).show();
-                jQuery('.quickaddtocart-results-items').html(res.data);
-                jQuery('.quickaddtocart-results').show();
+                $(_addtocartForm).show();
+                $('.quickaddtocart-results-items').html(res.data);
+                $('.quickaddtocart-results').show();
 
                 if (res.count > 0) {
                     initResultHandlers(res);
                 } 
 
-                jQuery(_searchProgress).hide();
-                jQuery(_quickaddtocartsearchButton).removeAttr('disabled');
+                $(_searchProgress).hide();
+                $(_quickaddtocartsearchButton).removeAttr('disabled');
                 _searching = false;
 
             });
@@ -69,19 +69,22 @@ var quickaddtocart = function ($)
     var initResultHandlers = function(res)
     {
     	//toolbar
-    	jQuery('.toolbar select').prop('onchange',null).change(navigation);
-    	jQuery('.toolbar a').click(navigation);
+    	$('.toolbar select').prop('onchange',null).change(navigation);
+    	$('.toolbar a').click(navigation);
     	
     	//layer
-    	jQuery('.block-layered-nav a').click(navigation);
+    	$('.block-layered-nav a').click(navigation);
     	
     	//products list
-    	jQuery('.category-products .btn-cart').prop('onclick',null).click(addToCart);
-    	jQuery('.category-products .link-wishlist').click(addToWishlist);
-    	jQuery('.category-products .link-compare').click(addToCompare);
-    	//configurable
+    	$('.category-products .btn-cart').prop('onclick',null).click(addToCart);
+    	
+    	//@todo wishlist and compare
+    	//$('.category-products .link-wishlist').click(addToWishlist);
+    	//$('.category-products .link-compare').click(addToCompare);
+    	
+    	//configurable/bundle/required options
     	var addToCartText = res.translate['Add to Cart'];
-    	jQuery('.category-products .actions, .category-products .action').find('a.button').attr('title',addToCartText).text(addToCartText).click(addToCart);
+    	$('.category-products .actions, .category-products .action').find('a.button').attr('title',addToCartText).text(addToCartText).click(selectOptions);
         
     	//from app.js
     	if (enquire){
@@ -104,7 +107,7 @@ var quickaddtocart = function ($)
             });
             
             $j('.toggle-content').each(function () {
-                var wrapper = jQuery(this);
+                var wrapper = $(this);
 
                 var hasTabs = wrapper.hasClass('tabs');
                 var hasAccordion = wrapper.hasClass('accordion');
@@ -117,10 +120,10 @@ var quickaddtocart = function ($)
 
                 //Create a ul for tabs if necessary.
                 if (hasTabs) {
-                    var ul = jQuery('<ul class="toggle-tabs"></ul>');
+                    var ul = $('<ul class="toggle-tabs"></ul>');
                     dts.each(function () {
-                        var dt = jQuery(this);
-                        var li = jQuery('<li></li>');
+                        var dt = $(this);
+                        var li = $('<li></li>');
                         li.html(dt.html());
                         ul.append(li);
                     });
@@ -147,19 +150,19 @@ var quickaddtocart = function ($)
                 //Toggle on tab (dt) click.
                 dts.on('click', function (e) {
                     //They clicked the current dt to close it. Restore the wrapper to unclicked state.
-                    if (jQuery(this).hasClass('current') && wrapper.hasClass('accordion-open')) {
+                    if ($(this).hasClass('current') && wrapper.hasClass('accordion-open')) {
                         wrapper.removeClass('accordion-open');
                     } else {
                         //They're clicking something new. Reflect the explicit user interaction.
                         wrapper.addClass('accordion-open');
                     }
-                    toggleClasses(jQuery(this), dts);
+                    toggleClasses($(this), dts);
                 });
 
                 //Toggle on tab (li) click.
                 if (hasTabs) {
                     lis.on('click', function (e) {
-                        toggleClasses(jQuery(this), lis);
+                        toggleClasses($(this), lis);
                     });
                     //Open the first tab.
                     lis.eq(0).trigger('click');
@@ -182,7 +185,7 @@ var quickaddtocart = function ($)
     	e.stopPropagation();
      	e.stopImmediatePropagation();
     	
-    	var $toolbarEle = jQuery(this);
+    	var $toolbarEle = $(this);
     	
     	var elementType = $toolbarEle.prop('tagName');
     	var location;
@@ -202,20 +205,16 @@ var quickaddtocart = function ($)
     	
     };
 
-    //init remove and qty
-    var initCartHandlers = function()
-    {
-        jQuery('.cart input.qty').change(editQty);
-        jQuery('.btn-remove').click(removeCart);
-    };
-    
     //add to wishlist
     var addToWishlist = function(e)
     {
     	e.preventDefault();
     	e.stopPropagation();
      	e.stopImmediatePropagation();
-    	
+     	
+		var wishlistLink = $(this).attr('href');
+
+    	$.get(wishlistLink);
     };
     
     //add to compare
@@ -224,9 +223,60 @@ var quickaddtocart = function ($)
     	e.preventDefault();
     	e.stopPropagation();
      	e.stopImmediatePropagation();
-    	
+     	
+		var compareLink = $(this).attr('href');
+
+    	$.get(compareLink);
     };    
 
+    //init remove and qty
+    var initCartHandlers = function()
+    {
+        $('.cart input.qty').change(editQty);
+        $('.btn-remove').click(removeCart);
+    };   
+    
+    //configurable/bundle options
+    var selectOptions = function(e)
+    {
+    	e.preventDefault();
+    	e.stopPropagation();
+     	e.stopImmediatePropagation();
+     	
+		var $productInfo = $(this).parents('.product-info');
+		var location = $productInfo.find('.link-wishlist').attr('href');
+		
+        var productId = _getProductId(location);
+        var data = {product_id:productId};
+		
+        $.get(_controllerUrl + 'options', data, function(res){
+        	
+            if (!res.error) {
+            	
+				$('.select-options-form').html(res.data);
+				
+				
+				
+            	$('.page').css('position','relative');
+				$('#select-options').show();
+
+            } else {
+
+            	//console.log(res.data);
+            }        	
+        	
+        });
+     	
+    }
+    
+    // parse out product id from link
+    var _getProductId = function(url)
+    {
+    	var productId = url.replace(/^(.+)\/product\/(\d+)\/form_key\/(.+)$/,'$2');
+    	
+    	return productId;
+    };
+    
     //add one to cart
     var addToCart = function (e)
     {
@@ -236,7 +286,7 @@ var quickaddtocart = function ($)
 
         cartProgress(true);
         
-    	var elementType = jQuery(this).prop('tagName');
+    	var elementType = $(this).prop('tagName');
     	var location;
     	
     	//add to cart button
@@ -247,13 +297,13 @@ var quickaddtocart = function ($)
     	} else if (elementType == 'A') { //configurable link
     		
     		//get product id
-    		var $productInfo = jQuery(this).parents('.product-info');
+    		var $productInfo = $(this).parents('.product-info');
     		location = $productInfo.find('.link-wishlist').attr('href');
     	}
     	
     	if (location){
     		
-            var productId = location.replace(/^(.+)\/product\/(\d+)\/form_key\/(.+)$/,'$2');
+            var productId = _getProductId(location);
             var qty = 1;
             var item = {product_id: productId, qty: qty}
             var data = {count: 0, items: []};
@@ -264,25 +314,25 @@ var quickaddtocart = function ($)
     	}        
 
     };
-
+    
     //post items to cart
     var post = function (data)
     {
-        jQuery.post(_controllerUrl + 'addtocart', data, function (res) {
+        $.post(_controllerUrl + 'addtocart', data, function (res) {
 
             if (!res.error) {
 
             	updateHeaderCart(res.data);
 
                 //flag added quickaddtocarts
-                jQuery('.quickaddtocart-checkbox').addClass('quickaddtocart-added');
+                $('.quickaddtocart-checkbox').addClass('quickaddtocart-added');
 
                 //update cart
                 updateCart();
             } 
 
             cartProgress(false);
-            jQuery(_addtocartProgress).hide();
+            $(_addtocartProgress).hide();
             _addingtocart = false;
         });
 
@@ -296,22 +346,22 @@ var quickaddtocart = function ($)
     		
     		if (datum.html){
         		var html = datum.html;
-        		jQuery(selector).html(html);
+        		$(selector).html(html);
     		}
     		if (datum.attributes){
     			for (var attributeKey in datum.attributes){
     				var attributeValue = datum.attributes[attributeKey];
-        			jQuery(selector).attr(attributeKey, attributeValue);
+        			$(selector).attr(attributeKey, attributeValue);
     			}
     		}
     		if (datum.hide){
-    			jQuery(selector).hide();
+    			$(selector).hide();
     		}
     		if (datum.addClass && datum.addClass.length > 0){
-    			jQuery(selector).addClass(datum.addClass);
+    			$(selector).addClass(datum.addClass);
     		}
     		if (datum.removeClass && datum.removeClass.length > 0){
-    			jQuery(selector).removeClass(datum.removeClass);
+    			$(selector).removeClass(datum.removeClass);
     		}
     	}
     };
@@ -319,7 +369,7 @@ var quickaddtocart = function ($)
     //update cart
     var updateCart = function ()
     {
-        var $cartForm = jQuery(_cartForm);
+        var $cartForm = $(_cartForm);
         var $cartLoad = $cartForm.find('.quickaddtocart-cart-load');
         cartProgress(true);
 
@@ -340,13 +390,13 @@ var quickaddtocart = function ($)
 
     var cartProgress = function (show)
     {
-        var $cartForm = jQuery(_cartForm);
+        var $cartForm = $(_cartForm);
         var $cartLoad = $cartForm.find('.quickaddtocart-cart-load');
         var outerHeight = $cartLoad.outerHeight();
-        var $cartProgress = jQuery(_cartProgress);
+        var $cartProgress = $(_cartProgress);
 
         $cartProgress.css('height', outerHeight + 'px');
-        var $addtocartProgress = jQuery(_addtocartProgress);
+        var $addtocartProgress = $(_addtocartProgress);
 
         if (show) {
             $cartProgress.show();
@@ -362,7 +412,7 @@ var quickaddtocart = function ($)
     var editQty = function(e){
     	
         e.preventDefault();
-        var $input = jQuery(this);
+        var $input = $(this);
         var name = $input.attr('name');
         var itemId = name.replace(/cart\[(\d+)\]\[qty\]/,'$1');
         itemId = parseInt(itemId);
@@ -374,7 +424,7 @@ var quickaddtocart = function ($)
             var data = {item_id: itemId, qty: qty};
             cartProgress(true);
 
-            jQuery.post(_controllerUrl + 'editqty', data, function (res) {
+            $.post(_controllerUrl + 'editqty', data, function (res) {
 
                 if (!res.error) {
 
@@ -394,7 +444,7 @@ var quickaddtocart = function ($)
     var removeCart = function (e)
     {
         e.preventDefault();
-        var href = jQuery(this).attr('href');
+        var href = $(this).attr('href');
         var itemId = href.replace(/^(.+)\/id\/(\d+)\/uenc.+$/,'$2');
         itemId = parseInt(itemId);
 
@@ -403,7 +453,7 @@ var quickaddtocart = function ($)
             var data = {item_id: itemId};
             cartProgress(true);
 
-            jQuery.post(_controllerUrl + 'removeitem', data, function (res) {
+            $.post(_controllerUrl + 'removeitem', data, function (res) {
 
                 if (!res.error) {
 
@@ -440,10 +490,44 @@ var quickaddtocart = function ($)
         search: function ()
         {
             search();
+        },
+        submit: function(varienForm)
+        {
+        	if (varienForm.validator.validate()){
+        		
+                cartProgress(true);
+                var form = varienForm.form;
+                var data = $(form).serialize();
+                
+                $.post(_controllerUrl + 'addtocart', data, function (res) {
+
+                    if (!res.error) {
+
+                    	updateHeaderCart(res.data);
+
+                        //flag added quickaddtocarts
+                        $('.quickaddtocart-checkbox').addClass('quickaddtocart-added');
+
+                        //update cart
+                        updateCart();
+                    } 
+
+                    cartProgress(false);
+                    $(_addtocartProgress).hide();
+                    _addingtocart = false;
+                });        		
+        	}
         }
     };
-}();
+};
 
-
+if (!window.jQuery){
+	
+	document.write('<script src="//ajax.googleapis.com/ajax/libs/$/1.11.2/$.min.js">\x3C/script><script>$.noConflict(); var quickaddtocart = new QuickAddToCart(jQuery);</script>');
+	
+} else {
+	
+	var quickaddtocart = new QuickAddToCart(jQuery);
+}
 
 

@@ -97,7 +97,42 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
         }
                 
         $this->getResponse()->setHeader('Content-type', 'application/json')->setBody(json_encode($result));
+    }
+    
+    /**
+     * Get configurable product options
+     */
+    public function optionsAction()
+    {
+        $result = array();
+        $productId = (int) $this->getRequest()->getParam('product_id');
         
+        if ($productId){
+            
+            $storeId = Mage::app()->getStore()->getId();
+            $product = Mage::getModel('catalog/product')->setStoreId($storeId);
+            $product->load($productId);
+            
+            Mage::register('product', $product);
+            Mage::register('current_product', $product);
+            
+            $this->loadLayout();
+            $layout = $this->getLayout();
+            $typeID = $product->getTypeID();
+                
+            $wrapper = $layout->getBlock($typeID.'.options');
+            $html = $wrapper->toHtml();
+                
+            $result['error'] = false;
+            $result['data'] = $html;
+            
+        } else {
+            
+            $result['error'] = true;
+            $result['data'] = 'Product id is required';
+        }
+        
+        $this->getResponse()->setHeader('Content-type', 'application/json')->setBody(json_encode($result));
     }
 
     /**
