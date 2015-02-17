@@ -17,14 +17,13 @@ $_product = $this->getProduct();
 
 <form action="<?php echo $this->getUrl('quickaddtocart/index/addtocart') ?>" method="post" id="quickaddtocart_options_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
     <?php echo $this->getBlockHtml('formkey') ?>
-
-    <input type="hidden" name="count" value="1" />
-    <input type="hidden" name="items[0][product_id]" value="<?php echo $_product->getId() ?>" />
+    <input type="hidden" name="product" value="<?php echo $_product->getId() ?>" />
+    
     <?php echo $this->getChildHtml('product.info.options.wrapper') ?>
     
     <?php echo $this->getPriceHtml($_product); ?>
     
-    <input type="text" pattern="\d*" name="items[0][qty]" maxlength="12" value="1" title="Qty" class="input-text required-entry qty">
+    <input type="text" pattern="\d*" name="qty" maxlength="12" value="1" title="Qty" class="input-text required-entry qty">
     <button type="submit" title="Add to Cart" class="button btn-cart"><span><span>Add to Cart</span></span></button>
 
 </form>

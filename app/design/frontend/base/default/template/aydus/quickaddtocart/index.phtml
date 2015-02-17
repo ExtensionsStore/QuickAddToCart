@@ -82,27 +82,30 @@
 
 <script type="application/javascript">
     //<![CDATA[
-    var options = {
-    controllerUrl : "<?php echo $this->getUrl('quickaddtocart/index') ?>",
-    searchForm : "#quickaddtocart_search",
-    addtocartForm : "#quickaddtocart_form",
-    cartForm : "#quickaddtocart_cart",
-    searchProgress : ".search-progress",
-    cartProgress : ".quickaddtocart-cart-loading",
-    quickaddtocartsearchButton : ".quickaddtocart-search-button",
-    checkoutButton : ".checkout-button"
-    };
-    quickaddtocart.init(options);
+    jQuery(function(){
+        var options = {
+    	    controllerUrl : "<?php echo $this->getUrl('quickaddtocart/index') ?>",
+    	    searchForm : "#quickaddtocart_search",
+    	    addtocartForm : "#quickaddtocart_form",
+    	    cartForm : "#quickaddtocart_cart",
+    	    searchProgress : ".search-progress",
+    	    cartProgress : ".quickaddtocart-cart-loading",
+    	    quickaddtocartsearchButton : ".quickaddtocart-search-button",
+    	    checkoutButton : ".checkout-button"
+	    };
+	    
+	    quickaddtocart.init(options);
 
-    //prevent form submit, start ajax search
-    new Event.observe("quickaddtocart_search", "submit", function(e){
-    e.stop();
-    quickaddtocart.search();
-    });
+	    //prevent form submit, start ajax search
+	    new Event.observe("quickaddtocart_search", "submit", function(e){
+	    e.stop();
+	    quickaddtocart.search();
+	    });
 
-    //prevent form submit, add to cart is via ajax
-    new Event.observe("quickaddtocart_form", "submit", function(e){
-    e.stop();
+	    //prevent form submit, add to cart is via ajax
+	    new Event.observe("quickaddtocart_form", "submit", function(e){
+	    e.stop();
+	    });
     });
     //]]>
 </script>
