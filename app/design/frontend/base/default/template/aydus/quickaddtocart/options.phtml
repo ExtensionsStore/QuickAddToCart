@@ -21,10 +21,14 @@ $_product = $this->getProduct();
     
     <?php echo $this->getChildHtml('product.info.options.wrapper') ?>
     
-    <?php echo $this->getPriceHtml($_product); ?>
-    
-    <input type="text" pattern="\d*" name="qty" maxlength="12" value="1" title="Qty" class="input-text required-entry qty">
-    <button type="submit" title="Add to Cart" class="button btn-cart"><span><span>Add to Cart</span></span></button>
+    <div class="product-options-bottom">
+        <?php echo $this->getPriceHtml($_product); ?>
+        
+        <div class="add-to-cart">
+            <input type="text" pattern="\d*" name="qty" maxlength="12" value="1" title="Qty" class="input-text required-entry qty">
+            <button type="submit" title="Add to Cart" class="button btn-cart"><span><span>Add to Cart</span></span></button>
+        </div>
+    </div>
 
 </form>
 

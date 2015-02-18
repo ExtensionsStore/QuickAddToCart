@@ -11,7 +11,7 @@
 <config>
     <modules>
         <Aydus_QuickAddToCart>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
         </Aydus_QuickAddToCart>
     </modules>
     <frontend>
@@ -31,16 +31,6 @@
                 </aydus_quickaddtocart>
             </updates>
         </layout>
-        <events>
-            <customer_login>
-                <observers>
-                    <quickaddtocart_redirect>
-                        <class>quickaddtocart/observer</class>
-                        <method>quickaddtocartRedirect</method>
-                    </quickaddtocart_redirect>
-                </observers>
-            </customer_login>        
-        </events>
     </frontend>
     <global>
         <blocks>

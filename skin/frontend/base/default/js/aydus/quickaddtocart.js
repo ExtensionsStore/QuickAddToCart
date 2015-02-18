@@ -11,35 +11,24 @@ function QuickAddToCart($)
     //quickaddtocart controller
     var _controllerUrl;
 
-    //forms
-    var _searchForm;
-    var _addtocartForm;
-    var _cartForm;
+    //progress
+    var _progressBackground;
 
-    //buttons
-    var _quickaddtocartsearchButton
-    var _checkoutButton;
-
-    //progress selectors
-    var _searchProgress;
-    var _cartProgress;
-
-    //locks
+    //lock
     var _searching = false;
-    var _addingtocart = false;
 
     //perform search
     var search = function (url)
     {
         if (!_searching) {
 
-            $(_searchProgress).css('display', 'inline-block');
-            $(_quickaddtocartsearchButton).attr('disabled', 'disabled');
+            progress('#quickaddtocart-query', true, '98% center');
+            $('.quickaddtocart-search-button').attr('disabled', 'disabled');
             _searching = true;
-            var $message = $(_addtocartForm).find('.message');
+            var $message = $('#quickaddtocart_form').find('.message');
             $message.html('');
 
-            var data = $(_searchForm).serialize(true);
+            var data = $('#quickaddtocart_search').serialize(true);
             var q = $('#quickaddtocart-query').val();
             
             if (!url){
@@ -49,7 +38,7 @@ function QuickAddToCart($)
 
             $.post(url, data, function (res) {
 
-                $(_addtocartForm).show();
+                $('#quickaddtocart_form').show();
                 $('.quickaddtocart-results-items').html(res.data);
                 $('.quickaddtocart-results').show();
 
@@ -57,8 +46,8 @@ function QuickAddToCart($)
                     initResultHandlers(res);
                 } 
 
-                $(_searchProgress).hide();
-                $(_quickaddtocartsearchButton).removeAttr('disabled');
+                progress('#quickaddtocart-query', false);
+                $('.quickaddtocart-search-button').removeAttr('disabled');
                 _searching = false;
 
             });
@@ -173,7 +162,8 @@ function QuickAddToCart($)
                     dts.eq(0).trigger('click');
                 }
 
-            });       		
+            });     
+            
     	}
      
     };
@@ -205,7 +195,7 @@ function QuickAddToCart($)
     	
     };
 
-    //add to wishlist
+    //@todo add to wishlist
     var addToWishlist = function(e)
     {
     	e.preventDefault();
@@ -217,7 +207,7 @@ function QuickAddToCart($)
     	$.get(wishlistLink);
     };
     
-    //add to compare
+    //@todo add to compare
     var addToCompare = function(e)
     {
     	e.preventDefault();
@@ -248,17 +238,16 @@ function QuickAddToCart($)
 		
         var productId = _getProductId(location);
         var data = {product_id:productId};
+		$('#select-options').show();
+		progress('.select-options-container', true);
 		
         $.get(_controllerUrl + 'options', data, function(res){
         	
             if (!res.error) {
             	
+        		progress('.select-options-container', false);
 				$('.select-options-form').html(res.data);
-				
-				
-				
             	$('.page').css('position','relative');
-				$('#select-options').show();
 
             } else {
 
@@ -284,7 +273,7 @@ function QuickAddToCart($)
     	e.stopPropagation();
      	e.stopImmediatePropagation();
 
-        cartProgress(true);
+        progress('.quickaddtocart-cart', true);
         
     	var elementType = $(this).prop('tagName');
     	var location;
@@ -316,15 +305,15 @@ function QuickAddToCart($)
                     updateCart();
                 } 
 
-                cartProgress(false);
-                $(_addtocartProgress).hide();
-                _addingtocart = false;
+                progress('.quickaddtocart-cart', false);
+                
             });
 
     	}        
 
     };
     
+    //update the header cart
     var updateHeaderCart = function(data)
     {
     	for (var selector in data){
@@ -356,16 +345,16 @@ function QuickAddToCart($)
     //update cart
     var updateCart = function ()
     {
-        var $cartForm = $(_cartForm);
+        var $cartForm = $('#quickaddtocart_cart');
         var $cartLoad = $cartForm.find('.quickaddtocart-cart-load');
-        cartProgress(true);
+        progress('.quickaddtocart-cart',true);
 
         if ($cartLoad.length > 0) {
             $cartLoad.load(_controllerUrl + 'cart', function (response, status, xhr) {
                 if (status == 'success') {
 
                 	initCartHandlers();
-                    cartProgress(false);
+                    progress('.quickaddtocart-cart',false);
 
                 }
 
@@ -374,26 +363,27 @@ function QuickAddToCart($)
         }
 
     };
-
-    var cartProgress = function (show)
+    
+    //progress background
+    var progress = function(selector, show, position)
     {
-        var $cartForm = $(_cartForm);
-        var $cartLoad = $cartForm.find('.quickaddtocart-cart-load');
-        var outerHeight = $cartLoad.outerHeight();
-        var $cartProgress = $(_cartProgress);
+    	var $container = $(selector);
+    	if (show){
+    		        	
+        	$container.attr('style', _progressBackground);   
+        	
+        	if (position){
+        		
+            	$container.css('background-position', position);   
+        	}
+        	
+    	} else {
+    		
+        	$container.attr('style', '');    		
+    		
+    	}
 
-        $cartProgress.css('height', outerHeight + 'px');
-        var $addtocartProgress = $(_addtocartProgress);
-
-        if (show) {
-            $cartProgress.show();
-            $addtocartProgress.show();
-        } else {
-            $cartProgress.hide();
-            $addtocartProgress.hide();
-        }
-
-    };
+    };_progressBackground
     
     //edit item qty
     var editQty = function(e){
@@ -409,7 +399,7 @@ function QuickAddToCart($)
         if (!isNaN(itemId) && !isNaN(qty)) {
 
             var data = {item_id: itemId, qty: qty};
-            cartProgress(true);
+            progress('.quickaddtocart-cart',true);
 
             $.post(_controllerUrl + 'editqty', data, function (res) {
 
@@ -422,6 +412,9 @@ function QuickAddToCart($)
                 } else {
 
                 }
+                
+                progress('.quickaddtocart-cart',false);
+                
             });
 
         }       	
@@ -438,7 +431,7 @@ function QuickAddToCart($)
         if (!isNaN(itemId)) {
 
             var data = {item_id: itemId};
-            cartProgress(true);
+            progress('.quickaddtocart-cart',true);
 
             $.post(_controllerUrl + 'removeitem', data, function (res) {
 
@@ -451,6 +444,9 @@ function QuickAddToCart($)
                 } else {
 
                 }
+                
+                progress('.quickaddtocart-cart',false);
+                
             });
 
         }    	
@@ -462,14 +458,7 @@ function QuickAddToCart($)
         {
             //set vars
             _controllerUrl = options.controllerUrl;
-            _addtocartForm = options.addtocartForm;
-            _cartForm = options.cartForm;
-            _searchForm = options.searchForm;
-            _searchProgress = options.searchProgress;
-            _addtocartProgress = options.addtocartProgress;
-            _cartProgress = options.cartProgress;
-            _quickaddtocartsearchButton = options.quickaddtocartsearchButton;
-            _checkoutButton = options.checkoutButton;
+            _progressBackground = options.progressBackground;
             
             initCartHandlers();
             
@@ -489,7 +478,8 @@ function QuickAddToCart($)
         {
         	if (varienForm.validator.validate()){
         		
-                cartProgress(true);
+        		progress('.select-options-container', true);
+
                 var form = varienForm.form;
                 var data = $(form).serialize();
                 
@@ -501,11 +491,11 @@ function QuickAddToCart($)
 
                         updateCart();
                     } 
-                    
+            		progress('.select-options-container', false);
+            		//remove options
+                    $('.select-options-form').html();
                     $('.select-options-close').click();
-                    cartProgress(false);
-                    $(_addtocartProgress).hide();
-                    _addingtocart = false;
+
                 });        		
         	}
         }

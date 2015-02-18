@@ -33,32 +33,10 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
     }
     
     /**
-     * Display quickaddtocart directory
+     * Display quickaddtocart page
      */
     public function indexAction() {
         $this->loadLayout()->_loadCrumbs()->renderLayout();
-    }
-
-    /**
-     * Display quickaddtocart directory
-     */
-    public function customerAction() {
-        
-        $this->loadLayout()->_loadCrumbs()->renderLayout();
-        
-
-        // 		if (Mage::helper('customer')->isLoggedIn()){
-        // 			$customer = Mage::helper('customer')->getCustomer();
-        // 			$dealerHelper = Mage::helper('dealer');
-        // 			if ($dealerHelper->isDealer($customer)){
-        // 				$this->loadLayout();
-        // 				$this->renderLayout();
-        // 			} else {
-        // 				$this->_redirect("/");
-        // 			}
-        // 		} else {
-        // 			$this->_redirect("/");
-        // 		}
     }
 
     /**

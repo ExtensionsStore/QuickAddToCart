@@ -27,7 +27,6 @@
                             <div class="input-box quickaddtocart-search-input">
                                 <input type="text" id="quickaddtocart-query" name="q" value="<?php echo $this->getQuery() ?>" placeholder="Search entire store here..." class="input-text required-entry" maxlength="128" autocomplete="off" />
                                 <button type="submit" class="button quickaddtocart-search-button"><span><span>Search</span></span></button>
-                                <img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="progress search-progress" />
                             </div>
 
                         </div>
@@ -61,10 +60,6 @@
                             <h3>Cart Summary</h3>
                         </div>
                         <div class="quickaddtocart-cart">
-                            <div class="quickaddtocart-cart-loading">
-                                <span class="quickaddtocart-cart-progress"></span>
-                                <img src="<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>" class="cart-progress" />
-                            </div>
                             <div class="quickaddtocart-cart-load">
                                 <?php echo $this->getChildHtml('checkout.cart') ?>
                             </div>
@@ -85,13 +80,7 @@
     jQuery(function(){
         var options = {
     	    controllerUrl : "<?php echo $this->getUrl('quickaddtocart/index') ?>",
-    	    searchForm : "#quickaddtocart_search",
-    	    addtocartForm : "#quickaddtocart_form",
-    	    cartForm : "#quickaddtocart_cart",
-    	    searchProgress : ".search-progress",
-    	    cartProgress : ".quickaddtocart-cart-loading",
-    	    quickaddtocartsearchButton : ".quickaddtocart-search-button",
-    	    checkoutButton : ".checkout-button"
+    	    progressBackground : "background: white url(<?php echo $this->getSkinUrl('images/aydus/quickaddtocart-progress.gif') ?>) no-repeat center center;"
 	    };
 	    
 	    quickaddtocart.init(options);
