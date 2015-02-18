@@ -35,11 +35,7 @@
             <action method="addItem"><type>js</type><name>calendar/calendar-setup.js</name><!--<params/><if/><condition>can_load_calendar_js</condition>--></action>
             
         </reference>
-        
-<!--         <reference name="breadcrumbs">              -->
-<!--         	<action method="addCrumb"><crumbName>Quick Add To Cart</crumbName><crumbInfo><label>Quick Add To Cart</label><title>Quick Add To Cart</title></crumbInfo></action> -->
-<!--        	</reference>         -->
-        
+                
         <reference name="content">
 			<block type="aydus_quickaddtocart/index" name="cart" template="aydus/quickaddtocart/index.phtml">
 	            <block type="checkout/cart" name="checkout.cart" template="aydus/quickaddtocart/cart.phtml">
@@ -70,11 +66,7 @@
             <action method="addItem"><type>skin_css</type><name>css/aydus/quickaddtocart.css</name></action>
             <action method="addItem"><type>skin_js</type><name>js/aydus/quickaddtocart.js</name></action>
         </reference>
-        
-<!--         <reference name="breadcrumbs">              -->
-<!--         	<action method="addCrumb"><crumbName>Quick Add To Cart</crumbName><crumbInfo><label>Quick Add To Cart</label><title>Quick Add To Cart</title></crumbInfo></action> -->
-<!--        	</reference>         -->
-        
+                
         <reference name="content">
 			<block type="aydus_quickaddtocart/index" name="cart" template="aydus/quickaddtocart/index.phtml">
 	            <block type="checkout/cart" name="checkout.cart" template="aydus/quickaddtocart/cart.phtml">

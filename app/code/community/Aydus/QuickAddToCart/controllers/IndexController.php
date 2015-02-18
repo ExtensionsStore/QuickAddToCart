@@ -10,19 +10,42 @@
 class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Action {
 
     /**
+     * Load breadcrumbs
+     * 
+     * @return Aydus_QuickAddToCart_IndexController
+     */
+    protected function _loadCrumbs()
+    {
+        $crumbs = $this->getLayout()->getBlock('breadcrumbs');
+        
+        $crumbs->addCrumb('home', array(
+                'label' => $this->__('Home'),
+                'title' => $this->__('Go to Home Page'),
+                'link' => Mage::getUrl('')
+        ));
+        $crumbs->addCrumb('quickaddtocart', array(
+                'label' => Mage::helper('aydus_quickaddtocart')->__('Quick Add to Cart'),
+                'title' => Mage::helper('aydus_quickaddtocart')->__('Quick Add to Cart'),
+                'link' => null,
+        ));
+        
+        return $this;
+    }
+    
+    /**
      * Display quickaddtocart directory
      */
     public function indexAction() {
-        $this->loadLayout();
-        $this->renderLayout();
+        $this->loadLayout()->_loadCrumbs()->renderLayout();
     }
 
     /**
      * Display quickaddtocart directory
      */
     public function customerAction() {
-        $this->loadLayout();
-        $this->renderLayout();
+        
+        $this->loadLayout()->_loadCrumbs()->renderLayout();
+        
 
         // 		if (Mage::helper('customer')->isLoggedIn()){
         // 			$customer = Mage::helper('customer')->getCustomer();
@@ -100,7 +123,7 @@ class Aydus_QuickAddToCart_IndexController extends Mage_Core_Controller_Front_Ac
     }
     
     /**
-     * Get configurable product options
+     * Get configurable/bundle product options
      */
     public function optionsAction()
     {
