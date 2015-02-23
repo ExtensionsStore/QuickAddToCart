@@ -383,7 +383,7 @@ function QuickAddToCart($)
     		
     	}
 
-    };_progressBackground
+    };
     
     //edit item qty
     var editQty = function(e){
