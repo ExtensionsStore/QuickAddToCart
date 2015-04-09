@@ -76,7 +76,7 @@ function QuickAddToCart($)
     	$('.category-products .actions, .category-products .action').find('a.button').attr('title',addToCartText).text(addToCartText).click(selectOptions);
         
     	//from app.js
-    	if (enquire){
+    	if (typeof enquire != 'undefined'){
     		
             enquire.register('(max-width: ' + bp.medium + 'px)', {
                 setup: function () {
