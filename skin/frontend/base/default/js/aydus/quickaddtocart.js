@@ -504,7 +504,7 @@ function QuickAddToCart($)
 
 if (!window.jQuery){
 	
-	document.write('<script src="//ajax.googleapis.com/ajax/libs/$/1.11.2/$.min.js">\x3C/script><script>$.noConflict(); var quickaddtocart = new QuickAddToCart(jQuery);</script>');
+	document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script><script>jQuery.noConflict(); var quickaddtocart = new QuickAddToCart(jQuery);</script>');
 	
 } else {
 	
